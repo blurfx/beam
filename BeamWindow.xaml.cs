@@ -87,7 +87,8 @@ namespace Beam
             ResizeMode = ResizeMode.CanResize;
             Width = 500;
             Height = 700;
-
+            grdSignIn.Visibility = Visibility.Hidden;
+            grdPIN.Visibility = Visibility.Hidden;
         }
 
         private void Window_SizeChanged_1(object sender, SizeChangedEventArgs e)
