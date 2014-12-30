@@ -85,15 +85,24 @@ namespace Beam
         private void loginSuccess()
         {
             ResizeMode = ResizeMode.CanResize;
-            Width = 500;
-            Height = 700;
+            Width = 460;
+            Height = 630;
             grdSignIn.Visibility = Visibility.Hidden;
             grdPIN.Visibility = Visibility.Hidden;
+            setWindowPosition();
         }
 
         private void Window_SizeChanged_1(object sender, SizeChangedEventArgs e)
         {
             Console.WriteLine(this.Width + "x" + this.Height);
+        }
+
+        protected void setWindowPosition()
+        {
+            var workArea = System.Windows.SystemParameters.WorkArea;
+            this.Left = workArea.X + ((workArea.Width - this.ActualWidth) / 2);
+            this.Top = workArea.Y + ((workArea.Height - this.ActualHeight) / 2);
+
         }
 
     }
