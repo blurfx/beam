@@ -89,6 +89,7 @@ namespace Beam
             Height = 630;
             grdSignIn.Visibility = Visibility.Hidden;
             grdPIN.Visibility = Visibility.Hidden;
+            grdMother.Visibility = Visibility.Visible;
             setWindowPosition();
         }
 
@@ -110,6 +111,15 @@ namespace Beam
 
             string a = await t.singleUserStream(Twitter.Method.GET, "https://userstream.twitter.com/1.1/user.json");
             return "1";
+        }
+
+        private void tbTweet_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                t.oAuthWebRequest(Twitter.Method.POST, "https://api.twitter.com/1.1/statuses/update.json", "status=" + oAuth.UrlEncode(tbTweet.Text));
+                tbTweet.Text = null;
+            }
         }
 
     }

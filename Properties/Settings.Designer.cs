@@ -25,7 +25,7 @@ namespace Beam.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("hMHsJ72UPlvpFMPKJrabQ")]
         public string conKey {
             get {
                 return ((string)(this["conKey"]));
@@ -34,7 +34,7 @@ namespace Beam.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("CAWGEPkiHhj3QKPgOxdqADEXPcjQ4tKOIpFHwO4ulPQ")]
         public string conSec {
             get {
                 return ((string)(this["conSec"]));

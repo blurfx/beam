@@ -16,6 +16,10 @@
         </Grid>
         
         <Grid Name="grdMother" Visibility="Hidden">
+            
+            <Grid VerticalAlignment="Bottom">
+                <TextBox x:Name="tbTweet" Style="{StaticResource placeHolder}" Tag="What's Happening?" MinHeight="25" KeyDown="tbTweet_KeyDown" TextWrapping="Wrap"></TextBox>
+            </Grid>
         </Grid>
     </Grid>
 </Window>
