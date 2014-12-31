@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.Web;
 using System.Net;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Beam.oAuth
 {
@@ -180,6 +181,69 @@ namespace Beam.oAuth
             ret = WebRequest(method, outUrl + querystring, postData);
 
             return ret;
+        }
+
+        /// <summary>
+        /// Submit a web request using oAuth.
+        /// </summary>
+        /// <param name="method">GET or POST</param>
+        /// <param name="url">The full url, including the querystring.</param>
+        /// <returns>The web server response.</returns>
+        public async Task<string> singleUserStream(Method method, string url)
+        {
+            string outUrl = "";
+            string querystring = "";
+            string ret = "";
+
+            Uri uri = new Uri(url);
+
+            string nonce = this.GenerateNonce();
+            string timeStamp = this.GenerateTimeStamp();
+
+            //Generate Signature
+            string sig = this.GenerateSignature(uri,
+                this.ConsumerKey,
+                this.ConsumerSecret,
+                this.Token,
+                this.TokenSecret,
+                this.Verifier,
+                method.ToString(),
+                timeStamp,
+                nonce,
+                out outUrl,
+                out querystring);
+
+            querystring += "&oauth_signature=" + HttpUtility.UrlEncode(sig);
+            Console.WriteLine(querystring);
+
+            if (querystring.Length > 0)
+            {
+                outUrl += "?";
+            }
+
+            url = outUrl + querystring;
+
+            HttpWebRequest webRequest = null;
+            StreamWriter requestWriter = null;
+            string responseData = "";
+
+            webRequest = System.Net.WebRequest.Create(url) as HttpWebRequest;
+            webRequest.Method = method.ToString();
+            webRequest.ServicePoint.Expect100Continue = false;
+
+            //WebResponseGet
+            using (StreamReader responseReader = new StreamReader(webRequest.GetResponse().GetResponseStream()))
+            {
+                string json;
+                while ((json = await responseReader.ReadLineAsync()) != null)
+                {
+                    Console.WriteLine(json);
+                }
+            }
+          
+                webRequest.GetResponse().GetResponseStream().Close();
+                webRequest = null;
+                return null;
         }
 
         /// <summary>

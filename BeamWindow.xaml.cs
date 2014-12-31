@@ -42,7 +42,7 @@ namespace Beam
         }
 
 
-        private void btPinAuth_Click(object sender, RoutedEventArgs e)
+        private async void btPinAuth_Click(object sender, RoutedEventArgs e)
         {
             try{
                 t.AccessTokenGet(t.Token, tbPIN.Text);
@@ -56,8 +56,8 @@ namespace Beam
                 return;
             }
             Console.WriteLine(t.oAuthWebRequest(Twitter.Method.GET, "https://api.twitter.com/1.1/account/verify_credentials.json", String.Empty));
-            loginSuccess();
-            //Console.WriteLine(t.oAuthWebRequest(Twitter.Method.POST, "https://api.twitter.com/1.1/statuses/update.json", "status=" + oAuth.UrlEncode("뿅!")));
+            loginSuccess();//Console.WriteLine(t.oAuthWebRequest(Twitter.Method.POST, "https://api.twitter.com/1.1/statuses/update.json", "status=" + oAuth.UrlEncode("뿅!")));
+            string json = await startStream();
         }
 
         private void slideGrid(int direction)
@@ -103,6 +103,13 @@ namespace Beam
             this.Left = workArea.X + ((workArea.Width - this.ActualWidth) / 2);
             this.Top = workArea.Y + ((workArea.Height - this.ActualHeight) / 2);
 
+        }
+
+        protected async Task<string> startStream()
+        {
+
+            string a = await t.singleUserStream(Twitter.Method.GET, "https://userstream.twitter.com/1.1/user.json");
+            return "1";
         }
 
     }
