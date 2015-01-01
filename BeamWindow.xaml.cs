@@ -57,7 +57,7 @@ namespace Beam
             }
             Console.WriteLine(t.oAuthWebRequest(Twitter.Method.GET, "https://api.twitter.com/1.1/account/verify_credentials.json", String.Empty));
             loginSuccess();//Console.WriteLine(t.oAuthWebRequest(Twitter.Method.POST, "https://api.twitter.com/1.1/statuses/update.json", "status=" + oAuth.UrlEncode("뿅!")));
-            string json = await startStream();
+           await startStream();
         }
 
         private void slideGrid(int direction)
@@ -106,16 +106,15 @@ namespace Beam
 
         }
 
-        protected async Task<string> startStream()
+        protected async Task startStream()
         {
-
-            string a = await t.singleUserStream(Twitter.Method.GET, "https://userstream.twitter.com/1.1/user.json");
-            return "1";
+            await t.singleUserStream("https://userstream.twitter.com/1.1/user.json");
         }
 
         private void tbTweet_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+
+            if (e.Key == Key.Enter && !String.IsNullOrWhiteSpace(tbTweet.Text))
             {
                 t.oAuthWebRequest(Twitter.Method.POST, "https://api.twitter.com/1.1/statuses/update.json", "status=" + oAuth.UrlEncode(tbTweet.Text));
                 tbTweet.Text = null;

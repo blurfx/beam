@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Beam.BeamWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Beam" Height="220" Width="300" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" SizeChanged="Window_SizeChanged_1">
+        Title="Beam" Height="220" Width="300" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" AllowsTransparency="True" Style="{StaticResource MetroWindowStyle}" SizeChanged="Window_SizeChanged_1">
     <Grid>
         
 
@@ -18,8 +18,9 @@
         <Grid Name="grdMother" Visibility="Hidden">
             
             <Grid VerticalAlignment="Bottom">
-                <TextBox x:Name="tbTweet" Style="{StaticResource placeHolder}" Tag="What's Happening?" MinHeight="25" KeyDown="tbTweet_KeyDown" TextWrapping="Wrap"></TextBox>
+                <TextBox x:Name="tbTweet" Style="{StaticResource placeHolder}" Tag="What's Happening?" MinHeight="25" KeyDown="tbTweet_KeyDown" TextWrapping="Wrap"/>
             </Grid>
         </Grid>
     </Grid>
+
 </Window>

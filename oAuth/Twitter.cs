@@ -184,13 +184,13 @@ namespace Beam.oAuth
         }
 
         /// <summary>
-        /// Submit a web request using oAuth.
+        /// Start User Stream
         /// </summary>
-        /// <param name="method">GET or POST</param>
         /// <param name="url">The full url, including the querystring.</param>
         /// <returns>The web server response.</returns>
-        public async Task<string> singleUserStream(Method method, string url)
+        public async Task singleUserStream(string url)
         {
+            Method method = Method.GET;
             string outUrl = "";
             string querystring = "";
             string ret = "";
@@ -243,7 +243,6 @@ namespace Beam.oAuth
           
                 webRequest.GetResponse().GetResponseStream().Close();
                 webRequest = null;
-                return null;
         }
 
         /// <summary>
