@@ -193,7 +193,6 @@ namespace Beam.oAuth
             Method method = Method.GET;
             string outUrl = "";
             string querystring = "";
-            string ret = "";
 
             Uri uri = new Uri(url);
 
@@ -224,9 +223,6 @@ namespace Beam.oAuth
             url = outUrl + querystring;
 
             HttpWebRequest webRequest = null;
-            StreamWriter requestWriter = null;
-            string responseData = "";
-
             webRequest = System.Net.WebRequest.Create(url) as HttpWebRequest;
             webRequest.Method = method.ToString();
             webRequest.ServicePoint.Expect100Continue = false;
