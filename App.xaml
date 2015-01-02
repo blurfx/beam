@@ -14,7 +14,7 @@
                                                 UpdateSourceTrigger=PropertyChanged}"
                                  x:Name="textSource" 
                                  Background="Transparent" 
-                                     
+                                 TextWrapping="Wrap"    
                                  HorizontalContentAlignment="Center"
                                  VerticalContentAlignment="Center"
                                  Panel.ZIndex="2" />

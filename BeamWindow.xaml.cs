@@ -20,8 +20,10 @@ namespace Beam
     /// <summary>
     /// Interaction logic for BeamWindow.xaml
     /// </summary>
+    /// 
     public partial class BeamWindow : Window
     {
+
         Twitter t = new Twitter();
         oAuth.oAuth oAuth = new oAuth.oAuth();
         public BeamWindow()
@@ -113,7 +115,13 @@ namespace Beam
 
         private void tbTweet_KeyDown(object sender, KeyEventArgs e)
         {
-
+            if (e.Key == Key.Enter && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                int carIndex = tbTweet.CaretIndex+1;
+                tbTweet.Text = tbTweet.Text.Insert(tbTweet.CaretIndex, "\n");
+                tbTweet.Select(carIndex, 0);
+                return;
+            }
             if (e.Key == Key.Enter && !String.IsNullOrWhiteSpace(tbTweet.Text))
             {
                 t.oAuthWebRequest(Twitter.Method.POST, "https://api.twitter.com/1.1/statuses/update.json", "status=" + oAuth.UrlEncode(tbTweet.Text));
