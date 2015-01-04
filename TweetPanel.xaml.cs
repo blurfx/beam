@@ -24,5 +24,28 @@ namespace Beam
         {
             InitializeComponent();
         }
+
+        public string Username
+        {
+            get { return user.Text; }
+            set { user.Text = value; }
+        }
+
+        public string ProfileImage
+        {
+            set {
+                BitmapImage img = new BitmapImage();
+                img.BeginInit();
+                img.UriSource = new Uri(value);
+                img.EndInit();
+                profile.Source = img;
+            }
+        }
+
+        public string Text
+        {
+            get { return tweet.Text; }
+            set { tweet.Text = value; }
+        }
     }
 }

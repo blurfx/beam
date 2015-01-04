@@ -4,7 +4,8 @@ using System.Web;
 using System.Net;
 using System.IO;
 using System.Threading.Tasks;
-
+using Beam;
+using System.Windows;
 namespace Beam.oAuth
 {
     public class Twitter : oAuth
@@ -234,6 +235,10 @@ namespace Beam.oAuth
                 while ((json = await responseReader.ReadLineAsync()) != null)
                 {
                     Console.WriteLine(json);
+                    if (!String.IsNullOrWhiteSpace(json))
+                    {
+                        ((BeamWindow)(Application.Current.MainWindow)).addTweet(json);
+                    }
                 }
             }
           

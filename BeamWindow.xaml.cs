@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using Beam.oAuth;
 using System.Web;
 using System.Windows.Media.Animation;
+using System.Web.Script.Serialization;
 
 namespace Beam
 {
@@ -111,6 +112,19 @@ namespace Beam
         protected async Task startStream()
         {
             await t.singleUserStream("https://userstream.twitter.com/1.1/user.json");
+        }
+
+        public async Task addTweet(string json)
+        {
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+            dynamic tweet = jss.Deserialize<dynamic>(json);
+            TweetPanel panel = new TweetPanel();
+            panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
+            panel.Text = tweet["text"];
+            panel.ProfileImage = tweet["user"]["profile_image_url_https"];
+            if (listTweet.Items.Count % 2 == 1) panel.Background = new SolidColorBrush(Color.FromRgb(230, 230, 230));
+            listTweet.Items.Insert(0,panel);
+            
         }
 
         private void tbTweet_KeyDown(object sender, KeyEventArgs e)

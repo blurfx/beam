@@ -4,8 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="100" d:DesignWidth="460">
-    <Grid>
-            
+             d:DesignHeight="50" d:DesignWidth="460" Width="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}},Path=ActualWidth}" >
+    <Grid x:Name="grdBack" Margin="0,5,10,5">
+        <TextBlock x:Name="user" Margin="55,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
+        <Image x:Name="profile" Width="40" Height="40" Margin="5,5,0,5" HorizontalAlignment="Left" />
+        <TextBlock x:Name="tweet" Margin="55,25,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
     </Grid>
 </UserControl>
