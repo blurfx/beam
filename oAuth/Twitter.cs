@@ -234,9 +234,9 @@ namespace Beam.oAuth
                 string json;
                 while ((json = await responseReader.ReadLineAsync()) != null)
                 {
-                    Console.WriteLine(json);
                     if (!String.IsNullOrWhiteSpace(json))
                     {
+                        Console.WriteLine(json);
                         ((BeamWindow)(Application.Current.MainWindow)).addTweet(json);
                     }
                 }
