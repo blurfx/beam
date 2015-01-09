@@ -17,7 +17,8 @@
         </Grid>
 
         <Grid Name="grdMother" Visibility="Hidden" OverridesDefaultStyle="True" UseLayoutRounding="True" >
-            <ListView Name="listTweet" SelectionMode="Single" ClipToBounds="True" />
+            <ListView Name="listTweet" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single"/>
+
             <Grid VerticalAlignment="Bottom">
                 <TextBox x:Name="tbTweet"  MinHeight="25" KeyDown="tbTweet_KeyDown" TextWrapping="Wrap" />
             </Grid>

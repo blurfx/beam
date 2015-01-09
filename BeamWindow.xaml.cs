@@ -1,20 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Beam.oAuth;
 using System.Web;
 using System.Windows.Media.Animation;
 using System.Web.Script.Serialization;
+using Beam.oAuth;
 
 namespace Beam
 {
@@ -122,9 +113,7 @@ namespace Beam
             panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
             panel.Text = tweet["text"];
             panel.ProfileImage = tweet["user"]["profile_image_url_https"];
-            if (listTweet.Items.Count % 2 == 1) panel.Background = new SolidColorBrush(Color.FromRgb(230, 230, 230));
             listTweet.Items.Insert(0,panel);
-            
         }
 
         private void tbTweet_KeyDown(object sender, KeyEventArgs e)
