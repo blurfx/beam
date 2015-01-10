@@ -4,8 +4,6 @@
         xmlns:beam="clr-namespace:Beam"
         Title="Beam" Height="220" Width="300" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" SizeChanged="Window_SizeChanged_1" SnapsToDevicePixels="True">
     <Grid>
-        
-
         <Grid Name="grdSignIn" Width="295" HorizontalAlignment="Left">
             <Button Name="btSignIn" Content="Sign In" HorizontalAlignment="Center" Height="43" Margin="30,110,35,0" VerticalAlignment="Top" Width="230" Click="btSignIn_Click"/>
         </Grid>
@@ -17,7 +15,7 @@
         </Grid>
 
         <Grid Name="grdMother" Visibility="Hidden" OverridesDefaultStyle="True" UseLayoutRounding="True" >
-            <ListView Name="listTweet" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single"/>
+            <ListView x:Name="listTweet" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single" ScrollViewer.CanContentScroll="False" />
 
             <Grid VerticalAlignment="Bottom">
                 <TextBox x:Name="tbTweet"  MinHeight="25" KeyDown="tbTweet_KeyDown" TextWrapping="Wrap" />

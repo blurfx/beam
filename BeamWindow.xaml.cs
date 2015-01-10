@@ -6,6 +6,9 @@ using System.Web;
 using System.Windows.Media.Animation;
 using System.Web.Script.Serialization;
 using Beam.oAuth;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Text;
 
 namespace Beam
 {
@@ -110,8 +113,8 @@ namespace Beam
             JavaScriptSerializer jss = new JavaScriptSerializer();
             dynamic tweet = jss.Deserialize<dynamic>(json);
             TweetPanel panel = new TweetPanel();
-            panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
-            panel.Text = tweet["text"];
+            panel.Username = System.Net.WebUtility.HtmlDecode(String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]));
+            panel.Text = System.Net.WebUtility.HtmlDecode(tweet["text"]);
             panel.ProfileImage = tweet["user"]["profile_image_url_https"];
             listTweet.Items.Insert(0,panel);
         }
