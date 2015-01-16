@@ -118,7 +118,7 @@ namespace Beam
             panel.ProfileImage = tweet["user"]["profile_image_url_https"];
             listTweet.Items.Insert(0,panel);
         }
-
+        /*
         private void tbTweet_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
@@ -134,6 +134,7 @@ namespace Beam
                 tbTweet.Text = null;
             }
         }
+        */
 
     }
 }
