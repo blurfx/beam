@@ -9,6 +9,7 @@ using Beam.oAuth;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Text;
+using System.Collections.Generic;
 
 namespace Beam
 {
@@ -18,6 +19,7 @@ namespace Beam
     /// 
     public partial class BeamWindow : Window
     {
+        enum JsonType { Init, Normal, Delete, Message }
 
         Twitter t = new Twitter();
         oAuth.oAuth oAuth = new oAuth.oAuth();
@@ -80,7 +82,7 @@ namespace Beam
         }
 
         private void loginSuccess()
-        {
+            {
             ResizeMode = ResizeMode.CanResize;
             Width = 460;
             Height = 630;
@@ -112,11 +114,57 @@ namespace Beam
         {
             JavaScriptSerializer jss = new JavaScriptSerializer();
             dynamic tweet = jss.Deserialize<dynamic>(json);
+            JsonType type = checkTweetType(tweet);          
             TweetPanel panel = new TweetPanel();
-            panel.Username = System.Net.WebUtility.HtmlDecode(String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]));
-            panel.Text = System.Net.WebUtility.HtmlDecode(tweet["text"]);
-            panel.ProfileImage = tweet["user"]["profile_image_url_https"];
-            listTweet.Items.Insert(0,panel);
+            switch(type){
+
+                case JsonType.Normal:
+                    panel.Username = System.Net.WebUtility.HtmlDecode(String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]));
+                    panel.Text = System.Net.WebUtility.HtmlDecode(tweet["text"]);
+                    panel.ProfileImage = tweet["user"]["profile_image_url_https"];
+                    listTweet.Items.Insert(0, panel);
+                    break;
+                
+                //add case for d_message
+            }
+        }
+
+        private JsonType checkTweetType(dynamic json)
+        {
+            List<Action> checkType = new List<Action>();
+            JsonType type = JsonType.Init;
+
+            checkType.Add(() =>
+            {
+                if (json["direct_message"]["id"] != null)
+                {
+                    type = JsonType.Message;
+
+                }
+            });
+            /*
+            checkType.Add(() => {
+                if (tweet["delete"])
+                {
+                    
+                }
+            });
+            */
+            checkType.Add(() =>
+            {
+                if (json["text"] != null)
+                {
+                    type = JsonType.Normal;
+                }
+            });
+
+            foreach (Action a in checkType)
+            {
+                try { a(); break; }
+                catch { }
+            }
+
+            return type;
         }
         /*
         private void tbTweet_KeyDown(object sender, KeyEventArgs e)
