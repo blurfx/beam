@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Text;
 using System.Collections.Generic;
+using Beam.Helper;
 
 namespace Beam
 {
@@ -113,15 +114,18 @@ namespace Beam
         public async Task addTweet(string json)
         {
             JavaScriptSerializer jss = new JavaScriptSerializer();
-            dynamic tweet = jss.Deserialize<dynamic>(json);
+            dynamic tweet = jss.Deserialize<dynamic>(System.Net.WebUtility.HtmlDecode(json));
             JsonType type = checkTweetType(tweet);          
             TweetPanel panel = new TweetPanel();
             switch(type){
 
                 case JsonType.Normal:
-                    panel.Username = System.Net.WebUtility.HtmlDecode(String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]));
-                    panel.Text = System.Net.WebUtility.HtmlDecode(tweet["text"]);
+                    panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
+                    panel.Text = tweet["text"];
                     panel.ProfileImage = tweet["user"]["profile_image_url_https"];
+                    
+                    panel.TimestampWithClient = String.Format("{0} / via {1}",Extension.ParseDatetime(tweet["created_at"]),Extension.ParseClientSource(tweet["source"]));
+                    
                     listTweet.Items.Insert(0, panel);
                     break;
                 

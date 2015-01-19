@@ -47,5 +47,10 @@ namespace Beam
             get { return tweet.Text; }
             set { tweet.Text = value; }
         }
+
+        public string TimestampWithClient
+        {
+            set { tc.Text = value; }
+        }
     }
 }

@@ -4,12 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="50" d:DesignWidth="460" Width="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}},Path=ActualWidth}" >
+             d:DesignHeight="70" d:DesignWidth="460" Width="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}},Path=ActualWidth}" >
     <Grid x:Name="grdBack" Margin="0,5,20,5">
         <Image x:Name="profile" Width="40" Height="40" Margin="5,5,0,5" HorizontalAlignment="Left" />
         <StackPanel>
             <TextBlock x:Name="user" Margin="55,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
             <TextBlock x:Name="tweet" Margin="55,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
+            <TextBlock x:Name="tc" Margin="55,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
         </StackPanel>
     </Grid>
 </UserControl>
