@@ -20,9 +20,17 @@ namespace Beam
     /// </summary>
     public partial class TweetPanel : UserControl
     {
+        long id = 0;
+
         public TweetPanel()
         {
             InitializeComponent();
+        }
+
+        public long ID
+        {
+            get { return id; }
+            set { id = value; }
         }
 
         public string Username

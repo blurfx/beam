@@ -120,15 +120,22 @@ namespace Beam
             switch(type){
 
                 case JsonType.Normal:
+                    panel.ID = (long)tweet["id"];
                     panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
                     panel.Text = tweet["text"];
                     panel.ProfileImage = tweet["user"]["profile_image_url_https"];
-                    
                     panel.TimestampWithClient = String.Format("{0} / via {1}",Extension.ParseDatetime(tweet["created_at"]),Extension.ParseClientSource(tweet["source"]));
-                    
+
                     listTweet.Items.Insert(0, panel);
                     break;
-                
+                case JsonType.Message:
+                    panel.ID = (long)tweet["direct_message"]["id"];
+                    panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
+                    panel.Text = tweet["direct_message"]["text"];
+                    panel.ProfileImage = tweet["direct_message"]["sender"]["profile_image_url_https"];
+                    panel.TimestampWithClient = String.Format("{0}", Extension.ParseDatetime(tweet["direct_message"]["created_at"]));
+                    listDM.Items.Insert(0, panel);
+                    break;
                 //add case for d_message
             }
         }

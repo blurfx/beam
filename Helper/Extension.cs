@@ -22,7 +22,6 @@ namespace Beam.Helper
             Regex r = new Regex("<a.*>(.*)</a>");
             Match m = r.Match(source);
             return m.Groups[1].ToString();
-
         }
     }
 }
