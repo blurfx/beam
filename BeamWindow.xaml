@@ -17,7 +17,15 @@
         </Grid>
 
         <Grid Name="grdMother" Visibility="Hidden" OverridesDefaultStyle="True" UseLayoutRounding="True" >
-            <ListView x:Name="listTweet" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"  />
+            <ListView x:Name="listTweet" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="답장(_R)" />
+                        <MenuItem Header="리트윗(_T)" />
+                        <MenuItem Header="관심글(_F)" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+            </ListView>
             <ListView x:Name="listReply" Visibility="Hidden" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"  />
             <ListView x:Name="listDM"    Visibility="Hidden" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"  />
         </Grid>
