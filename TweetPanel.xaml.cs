@@ -46,7 +46,7 @@ namespace Beam
                 img.BeginInit();
                 img.UriSource = new Uri(value);
                 img.EndInit();
-                profile.Source = img;
+                profile.ImageSource = img;
             }
         }
 

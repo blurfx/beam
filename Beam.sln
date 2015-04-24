@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Express 2012 for Windows Desktop
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Beam", "Beam.csproj", "{3858250C-E825-4258-83A6-8DDA1BCE7F92}"
 EndProject
 Global

@@ -6,7 +6,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="70" d:DesignWidth="460" Width="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type ListView}},Path=ActualWidth}" >
     <Grid x:Name="grdBack" Margin="0,5,25,5">
-        <Image x:Name="profile" Width="40" Height="40" Margin="5,5,0,5" HorizontalAlignment="Left" />
+        <Rectangle Width="40" Height="40" Margin="5,5,0,5" RadiusX="20" RadiusY="20" HorizontalAlignment="Left" > 
+            <Rectangle.Fill>
+                <ImageBrush x:Name="profile" />
+            </Rectangle.Fill>
+        </Rectangle>
         <StackPanel>
             <TextBlock x:Name="user" Margin="55,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
             <TextBlock x:Name="tweet" Margin="55,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
