@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Beam.Helper
 {
@@ -23,5 +24,32 @@ namespace Beam.Helper
             Match m = r.Match(source);
             return m.Groups[1].ToString();
         }
+
+        public static readonly DependencyProperty NormalImageProperty =
+    DependencyProperty.RegisterAttached("NormalImage", typeof(string), typeof(Extension), new PropertyMetadata(default(string)));
+
+        public static void SetNormalImage(UIElement element, string value)
+        {
+            element.SetValue(NormalImageProperty, value);
+        }
+
+        public static string GetNormalImage(UIElement element)
+        {
+            return (string)element.GetValue(NormalImageProperty);
+        }
+
+        public static readonly DependencyProperty HoverImageProperty =
+DependencyProperty.RegisterAttached("HoverImage", typeof(string), typeof(Extension), new PropertyMetadata(default(string)));
+
+        public static void SetHoverImage(UIElement element, string value)
+        {
+            element.SetValue(HoverImageProperty, value);
+        }
+
+        public static string GetHoverImage(UIElement element)
+        {
+            return (string)element.GetValue(HoverImageProperty);
+        }
+
     }
 }

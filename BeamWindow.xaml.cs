@@ -44,18 +44,28 @@ namespace Beam
 
         private async void btPinAuth_Click(object sender, RoutedEventArgs e)
         {
-            try{
-                t.AccessTokenGet(t.Token, tbPIN.Text);
-                
+            if (String.IsNullOrEmpty(Properties.Settings.Default.token) || String.IsNullOrEmpty(Properties.Settings.Default.tokenSec))
+            {
+                try
+                {
+                    t.AccessTokenGet(t.Token, tbPIN.Text);
+
+                }
+                catch
+                {
+                    MessageBox.Show("Wrong PIN Number!");
+                    tbPIN.Text = String.Empty;
+                    slideGrid(2);
+                    btSignIn.IsEnabled = true;
+                    return;
+                }
+                Console.WriteLine(t.oAuthWebRequest(Twitter.Method.GET, "https://api.twitter.com/1.1/account/verify_credentials.json", String.Empty));
             }
-            catch{
-                MessageBox.Show("Wrong PIN Number!");
-                tbPIN.Text = String.Empty;
-                slideGrid(2);
-                btSignIn.IsEnabled = true;
-                return;
+            else
+            {
+                t.Token = Properties.Settings.Default.token;
+                t.TokenSecret = Properties.Settings.Default.tokenSec;
             }
-            Console.WriteLine(t.oAuthWebRequest(Twitter.Method.GET, "https://api.twitter.com/1.1/account/verify_credentials.json", String.Empty));
             loginSuccess();//Console.WriteLine(t.oAuthWebRequest(Twitter.Method.POST, "https://api.twitter.com/1.1/statuses/update.json", "status=" + oAuth.UrlEncode("뿅!")));
            await startStream();
         }
@@ -176,6 +186,42 @@ namespace Beam
             }
 
             return type;
+        }
+
+        private void beamTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.Source is TabControl)
+            {
+                resetTabHeaderImage();
+
+                if (tabTimeline.IsSelected)
+                {
+                    twitter_off.Visibility = Visibility.Collapsed;
+                    twitter_on.Visibility = Visibility.Visible;
+                }
+                else if (tabMention.IsSelected)
+                {
+                    mention_off.Visibility = Visibility.Collapsed;
+                    mention_on.Visibility = Visibility.Visible;
+                }
+                else if (tabMessage.IsSelected)
+                {
+                    message_off.Visibility = Visibility.Collapsed;
+                    message_on.Visibility = Visibility.Visible;
+                }
+            }
+        }
+
+        private void resetTabHeaderImage()
+        {
+            Image[] on_img = { twitter_on, mention_on, message_on };
+            Image[] off_img = { twitter_off, mention_off, message_off };
+            int i = 0;
+            for (; i < on_img.Length; i++)
+            {
+                on_img[i].Visibility = Visibility.Collapsed;
+                off_img[i].Visibility = Visibility.Visible;
+            }
         }
         /*
         private void tbTweet_KeyDown(object sender, KeyEventArgs e)

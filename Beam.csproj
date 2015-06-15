@@ -63,7 +63,7 @@
     <Compile Include="PostDialog.xaml.cs">
       <DependentUpon>PostDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TweetPanel.xaml.cs">
+    <Compile Include="UserControl\TweetPanel.xaml.cs">
       <DependentUpon>TweetPanel.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -110,10 +110,66 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TweetPanel.xaml">
+    <Page Include="Themes\Metro\Dark\MetroDark.MSControls.Core.Implicit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Metro\Dark\Styles.Shared.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Metro\Dark\Styles.WPF.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Metro\Dark\Theme.Colors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Metro\Light\Metro.MSControls.Core.Implicit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Metro\Light\Styles.Shared.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Metro\Light\Styles.WPF.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Metro\Light\Theme.Colors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControl\TweetPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\conversation_dummy_on.png" />
+    <Resource Include="Assets\conversation_off.png" />
+    <Resource Include="Assets\conversation_on.png" />
+    <Resource Include="Assets\message_off.png" />
+    <Resource Include="Assets\message_on.png" />
+    <Resource Include="Assets\reply_dummy_on.png" />
+    <Resource Include="Assets\reply_off.png" />
+    <Resource Include="Assets\reply_on.png" />
+    <Resource Include="Assets\retweet_off.png" />
+    <Resource Include="Assets\retweet_on.png" />
+    <Resource Include="Assets\setting_off.png" />
+    <Resource Include="Assets\setting_on.png" />
+    <Resource Include="Assets\star_off.png" />
+    <Resource Include="Assets\star_on.png" />
+    <Resource Include="Assets\twitter_dummy_off.png" />
+    <Resource Include="Assets\twitter_dummy_on.png" />
+    <Resource Include="Assets\twitter_off.png" />
+    <Resource Include="Assets\twitter_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\mention_off.png" />
+    <Resource Include="Assets\mention_on.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

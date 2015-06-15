@@ -17,17 +17,47 @@
         </Grid>
 
         <Grid Name="grdMother" Visibility="Hidden" OverridesDefaultStyle="True" UseLayoutRounding="True" >
-            <ListView x:Name="listTweet" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
-                <ListView.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="답장(_R)" />
-                        <MenuItem Header="리트윗(_T)" />
-                        <MenuItem Header="관심글(_F)" />
-                    </ContextMenu>
-                </ListView.ContextMenu>
-            </ListView>
-            <ListView x:Name="listReply" Visibility="Hidden" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"  />
-            <ListView x:Name="listDM"    Visibility="Hidden" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"  />
+            <TabControl x:Name="beamTab" TabStripPlacement="Left" SelectionChanged="beamTab_SelectionChanged" >
+                <TabItem x:Name="tabTimeline">
+                    <TabItem.Header>
+                        <StackPanel>
+                            <Image x:Name="twitter_on" Source="/Beam;component/Assets/twitter_on.png"  />
+                            <Image x:Name="twitter_off" Source="/Beam;component/Assets/twitter_off.png" Visibility="Collapsed" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <ListView x:Name="listTweet" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="답장(_R)" />
+                                <MenuItem Header="리트윗(_T)" />
+                                <MenuItem Header="관심글(_F)" />
+                            </ContextMenu>
+                        </ListView.ContextMenu>
+                    </ListView>
+                </TabItem>
+                
+                <TabItem x:Name="tabMention">
+                    <TabItem.Header>
+                        <StackPanel>
+                            <Image x:Name="mention_on" Source="/Beam;component/Assets/mention_on.png" Visibility="Collapsed" />
+                            <Image x:Name="mention_off" Source="/Beam;component/Assets/mention_off.png" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <ListView x:Name="listReply" Visibility="Hidden" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"  />
+                </TabItem>
+                
+                <TabItem x:Name="tabMessage">
+                    <TabItem.Header>
+                        <StackPanel>
+                            <Image x:Name="message_on" Source="/Beam;component/Assets/message_on.png" Visibility="Collapsed" />
+                            <Image x:Name="message_off" Source="/Beam;component/Assets/message_off.png" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <ListView x:Name="listDM"    Visibility="Hidden" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden"  />
+                </TabItem>
+            </TabControl>
+            
+            
         </Grid>
     </Grid>
 
