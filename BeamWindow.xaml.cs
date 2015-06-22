@@ -144,7 +144,7 @@ namespace Beam
                     panel.Text = tweet["direct_message"]["text"];
                     panel.ProfileImage = tweet["direct_message"]["sender"]["profile_image_url_https"];
                     panel.TimestampWithClient = String.Format("{0}", Extension.ParseDatetime(tweet["direct_message"]["created_at"]));
-                    listDM.Items.Insert(0, panel);
+                    //listDM.Items.Insert(0, panel);
                     break;
                 //add case for d_message
             }
@@ -194,33 +194,18 @@ namespace Beam
             {
                 resetTabHeaderImage();
 
-                if (tabTimeline.IsSelected)
-                {
-                    twitter_off.Visibility = Visibility.Collapsed;
-                    twitter_on.Visibility = Visibility.Visible;
-                }
-                else if (tabMention.IsSelected)
-                {
-                    mention_off.Visibility = Visibility.Collapsed;
-                    mention_on.Visibility = Visibility.Visible;
-                }
-                else if (tabMessage.IsSelected)
-                {
-                    message_off.Visibility = Visibility.Collapsed;
-                    message_on.Visibility = Visibility.Visible;
-                }
             }
         }
 
         private void resetTabHeaderImage()
         {
-            Image[] on_img = { twitter_on, mention_on, message_on };
-            Image[] off_img = { twitter_off, mention_off, message_off };
-            int i = 0;
-            for (; i < on_img.Length; i++)
+            //Image[] on_img = { twitter_on, mention_on, message_on };
+            //Image[] off_img = { twitter_off, mention_off, message_off };
+            //int i = 0;
+            //for (; i < on_img.Length; i++)
             {
-                on_img[i].Visibility = Visibility.Collapsed;
-                off_img[i].Visibility = Visibility.Visible;
+            //    on_img[i].Visibility = Visibility.Collapsed;
+                //off_img[i].Visibility = Visibility.Visible;
             }
         }
         /*
