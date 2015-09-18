@@ -27,18 +27,16 @@ namespace Beam
         public BeamWindow()
         {
             InitializeComponent();
-            tbSlideBack.MouseDown += delegate { slideGrid(2); btSignIn.IsEnabled = true; tbPIN.Text = String.Empty; };
-            tbSlideBack.TouchDown += delegate { slideGrid(2); btSignIn.IsEnabled = true; tbPIN.Text = String.Empty; };
         }
 
         private void btSignIn_Click(object sender, RoutedEventArgs e)
         {
-            slideGrid(1);
             Uri uri = new Uri(t.AuthorizationLinkGet());
             System.Diagnostics.Process.Start(uri.ToString());
             t.Token = HttpUtility.ParseQueryString(uri.Query)["oauth_token"];
             btSignIn.IsEnabled = false;
-            
+            grdSignIn.Visibility = Visibility.Collapsed;
+            grdPIN.Visibility = Visibility.Visible;
         }
 
 
@@ -55,8 +53,9 @@ namespace Beam
                 {
                     MessageBox.Show("Wrong PIN Number!");
                     tbPIN.Text = String.Empty;
-                    slideGrid(2);
                     btSignIn.IsEnabled = true;
+                    grdSignIn.Visibility = Visibility.Visible;
+                    grdPIN.Visibility = Visibility.Collapsed;
                     return;
                 }
                 Console.WriteLine(t.oAuthWebRequest(Twitter.Method.GET, "https://api.twitter.com/1.1/account/verify_credentials.json", String.Empty));
@@ -70,50 +69,16 @@ namespace Beam
            await startStream();
         }
 
-        private void slideGrid(int direction)
-        {
-            ThicknessAnimation da;
-            ThicknessAnimation da2;
-            //1 Left, 2 Right
-            switch (direction)
-            {
-                case 1:
-                    da = new ThicknessAnimation(new Thickness(0), new Duration(TimeSpan.FromMilliseconds(200)));
-                    da2 = new ThicknessAnimation(new Thickness(-295, 0, 0, 0), new Duration(TimeSpan.FromMilliseconds(200)));
-                    break;
-                case 2:
-                default:
-                    da = new ThicknessAnimation(new Thickness(295, 0, 0, 0), new Duration(TimeSpan.FromMilliseconds(200)));
-                    da2 = new ThicknessAnimation(new Thickness(0), new Duration(TimeSpan.FromMilliseconds(200)));
-                    break;
-            }
-
-            grdSignIn.BeginAnimation(MarginProperty, da2);
-            grdPIN.BeginAnimation(MarginProperty, da);
-        }
-
         private void loginSuccess()
-            {
-            ResizeMode = ResizeMode.CanResize;
-            Width = 460;
-            Height = 630;
+        {
             grdSignIn.Visibility = Visibility.Hidden;
             grdPIN.Visibility = Visibility.Hidden;
             grdMother.Visibility = Visibility.Visible;
-            setWindowPosition();
         }
 
         private void Window_SizeChanged_1(object sender, SizeChangedEventArgs e)
         {
             Console.WriteLine(this.Width + "x" + this.Height);
-        }
-
-        protected void setWindowPosition()
-        {
-            var workArea = System.Windows.SystemParameters.WorkArea;
-            this.Left = workArea.X + ((workArea.Width - this.ActualWidth) / 2);
-            this.Top = workArea.Y + ((workArea.Height - this.ActualHeight) / 2);
-
         }
 
         protected async Task startStream()
@@ -146,7 +111,6 @@ namespace Beam
                     panel.TimestampWithClient = String.Format("{0}", Extension.ParseDatetime(tweet["direct_message"]["created_at"]));
                     //listDM.Items.Insert(0, panel);
                     break;
-                //add case for d_message
             }
         }
 
