@@ -52,6 +52,33 @@
                 </Style.Triggers>
             </Style>
 
+            <Style x:Key="SvgButton" TargetType="{x:Type Button}">
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Name="border" 
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}" 
+                        BorderBrush="{x:Null}" 
+                        Background="White">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="BorderBrush" Value="{x:Null}" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Opacity" Value="0.25" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+            </Style>
+            
             <!-- SVG Paths -->
             <Style x:Key="timelineSVG" TargetType="{x:Type Path}">
                 <Setter Property="Data">
@@ -112,6 +139,7 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
         </ResourceDictionary>
         
         

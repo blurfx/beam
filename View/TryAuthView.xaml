@@ -1,0 +1,14 @@
+﻿<UserControl x:Class="Beam.View.TryAuthView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Beam.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid Name="grdPIN"  HorizontalAlignment="Stretch">
+        <TextBox x:Name="tbPIN" Style="{StaticResource placeHolder}" Tag="Insert PIN Here" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="23" Margin="0,50,0,0" VerticalAlignment="Top" Width="230"/>
+        <Button Name="btPinAuth" Content="Into The Beam" HorizontalAlignment="Center" VerticalAlignment="Top" Height="43" Margin="0,100,0,0"  Width="230" Click="btPinAuth_Click"/>
+        <TextBlock x:Name="tbSlideBack" HorizontalAlignment="Center" Height="22" Margin="0,165,0,0" TextWrapping="Wrap" Text="&lt;&lt; Wait! Let Me Take Back" VerticalAlignment="Top" />
+    </Grid>
+</UserControl>

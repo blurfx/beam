@@ -10,18 +10,24 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Beam
+namespace Beam.View
 {
     /// <summary>
-    /// PostDialog.xaml에 대한 상호 작용 논리
+    /// Interaction logic for TimelineView.xaml
     /// </summary>
-    public partial class PostDialog : Window
+    public partial class TimelineView : UserControl
     {
-        public PostDialog()
+        public TimelineView()
         {
             InitializeComponent();
+        }
+
+        public void InsertTweet()
+        {
+
         }
     }
 }

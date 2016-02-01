@@ -63,7 +63,19 @@
     <Compile Include="PostDialog.xaml.cs">
       <DependentUpon>PostDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControl\TweetPanel.xaml.cs">
+    <Compile Include="View\AlertBox.xaml.cs">
+      <DependentUpon>AlertBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\InitAuthView.xaml.cs">
+      <DependentUpon>InitAuthView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TimelineView.xaml.cs">
+      <DependentUpon>TimelineView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TryAuthView.xaml.cs">
+      <DependentUpon>TryAuthView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TweetPanel.xaml.cs">
       <DependentUpon>TweetPanel.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -110,7 +122,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControl\TweetPanel.xaml">
+    <Page Include="View\AlertBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\InitAuthView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\TimelineView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\TryAuthView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\TweetPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

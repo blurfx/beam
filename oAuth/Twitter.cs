@@ -6,6 +6,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Beam;
 using System.Windows;
+using System.Windows.Threading;
+
 namespace Beam.oAuth
 {
     public class Twitter : oAuth
@@ -14,7 +16,7 @@ namespace Beam.oAuth
         public const string REQUEST_TOKEN = "https://api.twitter.com/oauth/request_token";
         public const string AUTHORIZE = "https://api.twitter.com/oauth/authorize";
         public const string ACCESS_TOKEN = "https://api.twitter.com/oauth/access_token";
-
+        public const string USERSTREAM_URI = "https://userstream.twitter.com/1.1/user.json";
         private string _consumerKey = "";
         private string _consumerSecret = "";
         private string _token = "";
@@ -189,13 +191,13 @@ namespace Beam.oAuth
         /// </summary>
         /// <param name="url">The full url, including the querystring.</param>
         /// <returns>The web server response.</returns>
-        public async Task singleUserStream(string url)
+        public async Task singleUserStream(Action<string> streamCallback, DispatcherOperation errorCallback = null)
         {
             Method method = Method.GET;
             string outUrl = "";
             string querystring = "";
-
-            Uri uri = new Uri(url);
+            string url = USERSTREAM_URI;
+            Uri uri = new Uri(USERSTREAM_URI);
 
             string nonce = this.GenerateNonce();
             string timeStamp = this.GenerateTimeStamp();
@@ -227,23 +229,27 @@ namespace Beam.oAuth
             webRequest = System.Net.WebRequest.Create(url) as HttpWebRequest;
             webRequest.Method = method.ToString();
             webRequest.ServicePoint.Expect100Continue = false;
-
-            //WebResponseGet
-            using (StreamReader responseReader = new StreamReader(webRequest.GetResponse().GetResponseStream()))
-            {
-                string json;
-                while ((json = await responseReader.ReadLineAsync()) != null)
+            try {
+                //WebResponseGet
+                using (StreamReader responseReader = new StreamReader(webRequest.GetResponse().GetResponseStream()))
                 {
-                    if (!String.IsNullOrWhiteSpace(json))
+                    string json;
+                    while ((json = await responseReader.ReadLineAsync()) != null)
                     {
-                        Console.WriteLine(json);
-                        ((BeamWindow)(Application.Current.MainWindow)).addTweet(json);
+                        if (!String.IsNullOrWhiteSpace(json))
+                        {
+                            Console.WriteLine(json);
+                            streamCallback(json);
+                        }
                     }
                 }
+            } catch
+            {
+                if (errorCallback != null)
+                    errorCallback.Task.Start();
             }
-          
-                webRequest.GetResponse().GetResponseStream().Close();
-                webRequest = null;
+            webRequest.GetResponse().GetResponseStream().Close();
+            webRequest = null;
         }
 
         /// <summary>

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Web;
-using System.Windows.Media.Animation;
 using System.Web.Script.Serialization;
 using Beam.oAuth;
 using System.Windows.Controls;
@@ -11,6 +10,9 @@ using System.Windows.Media;
 using System.Text;
 using System.Collections.Generic;
 using Beam.Helper;
+using static Beam.Helper.Extension;
+using Beam.View;
+using System.Windows.Threading;
 
 namespace Beam
 {
@@ -20,137 +22,74 @@ namespace Beam
     /// 
     public partial class BeamWindow : Window
     {
-        enum JsonType { Init, Normal, Delete, Message }
 
-        Twitter t = new Twitter();
-        oAuth.oAuth oAuth = new oAuth.oAuth();
+        public Twitter t = new Twitter();
+        string _currentView = null;
+
+
+        Dictionary<String, UserControl> viewDict = new Dictionary<string, UserControl>();
+
         public BeamWindow()
         {
             InitializeComponent();
-        }
 
-        private void btSignIn_Click(object sender, RoutedEventArgs e)
-        {
-            Uri uri = new Uri(t.AuthorizationLinkGet());
-            System.Diagnostics.Process.Start(uri.ToString());
-            t.Token = HttpUtility.ParseQueryString(uri.Query)["oauth_token"];
-            btSignIn.IsEnabled = false;
-            grdSignIn.Visibility = Visibility.Collapsed;
-            grdPIN.Visibility = Visibility.Visible;
-        }
+            viewDict.Add("init", new InitAuthView());
+            viewDict.Add("auth", new TryAuthView());
+            viewDict.Add("timeline", new TimelineView());
 
+            ChangeView("init");
 
-        private async void btPinAuth_Click(object sender, RoutedEventArgs e)
-        {
-            if (String.IsNullOrEmpty(Properties.Settings.Default.token) || String.IsNullOrEmpty(Properties.Settings.Default.tokenSec))
+            if (!String.IsNullOrEmpty(Properties.Settings.Default.token) || !String.IsNullOrEmpty(Properties.Settings.Default.tokenSec))
             {
-                try
-                {
-                    t.AccessTokenGet(t.Token, tbPIN.Text);
-
-                }
-                catch
-                {
-                    MessageBox.Show("Wrong PIN Number!");
-                    tbPIN.Text = String.Empty;
-                    btSignIn.IsEnabled = true;
-                    grdSignIn.Visibility = Visibility.Visible;
-                    grdPIN.Visibility = Visibility.Collapsed;
-                    return;
-                }
-                Console.WriteLine(t.oAuthWebRequest(Twitter.Method.GET, "https://api.twitter.com/1.1/account/verify_credentials.json", String.Empty));
+                ChangeView("timeline");
+                Task.Run(async () => await startStream());
             }
-            else
+            
+            btTimeline.Click += delegate { ChangeView("timeline"); };
+            btConnect.Click += delegate { ChangeView("auth"); };
+            btMessage.Click += delegate { ChangeView("init"); };
+        }
+
+        public async Task startStream()
+        {
+            await t.singleUserStream(delegate (string json)
             {
-                t.Token = Properties.Settings.Default.token;
-                t.TokenSecret = Properties.Settings.Default.tokenSec;
-            }
-            loginSuccess();//Console.WriteLine(t.oAuthWebRequest(Twitter.Method.POST, "https://api.twitter.com/1.1/statuses/update.json", "status=" + oAuth.UrlEncode("뿅!")));
-           await startStream();
-        }
-
-        private void loginSuccess()
-        {
-            grdSignIn.Visibility = Visibility.Hidden;
-            grdPIN.Visibility = Visibility.Hidden;
-            grdMother.Visibility = Visibility.Visible;
-        }
-
-        private void Window_SizeChanged_1(object sender, SizeChangedEventArgs e)
-        {
-            Console.WriteLine(this.Width + "x" + this.Height);
-        }
-
-        protected async Task startStream()
-        {
-            await t.singleUserStream("https://userstream.twitter.com/1.1/user.json");
-        }
-
-        public async Task addTweet(string json)
-        {
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-            dynamic tweet = jss.Deserialize<dynamic>(System.Net.WebUtility.HtmlDecode(json));
-            JsonType type = checkTweetType(tweet);          
-            TweetPanel panel = new TweetPanel();
-            switch(type){
-
-                case JsonType.Normal:
-                    panel.ID = (long)tweet["id"];
-                    panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
-                    panel.Text = tweet["text"];
-                    panel.ProfileImage = tweet["user"]["profile_image_url_https"];
-                    panel.TimestampWithClient = String.Format("{0} / via {1}",Extension.ParseDatetime(tweet["created_at"]),Extension.ParseClientSource(tweet["source"]));
-
-                    listTweet.Items.Insert(0, panel);
-                    break;
-                case JsonType.Message:
-                    panel.ID = (long)tweet["direct_message"]["id"];
-                    panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
-                    panel.Text = tweet["direct_message"]["text"];
-                    panel.ProfileImage = tweet["direct_message"]["sender"]["profile_image_url_https"];
-                    panel.TimestampWithClient = String.Format("{0}", Extension.ParseDatetime(tweet["direct_message"]["created_at"]));
-                    //listDM.Items.Insert(0, panel);
-                    break;
-            }
-        }
-
-        private JsonType checkTweetType(dynamic json)
-        {
-            List<Action> checkType = new List<Action>();
-            JsonType type = JsonType.Init;
-
-            checkType.Add(() =>
-            {
-                if (json["direct_message"]["id"] != null)
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                dynamic tweet = jss.Deserialize<dynamic>(System.Net.WebUtility.HtmlDecode(json));
+                TweetType type = checkTweetType(tweet);
+                TweetPanel panel = new TweetPanel();
+                switch (type)
                 {
-                    type = JsonType.Message;
 
+                    case TweetType.Normal:
+                        panel.ID = (long)tweet["id"];
+                        panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
+                        panel.Text = tweet["text"];
+                        panel.ProfileImage = tweet["user"]["profile_image_url_https"];
+                        panel.TimestampWithClient = String.Format("{0} / via {1}", Extension.ParseDatetime(tweet["created_at"]), Extension.ParseClientSource(tweet["source"]));
+
+                        //((TimelineView)viewDict["timeline"]).InsertTweet();// listTweet.Items.Insert(0, panel);
+                        break;
+                    case TweetType.Message:
+                        panel.ID = (long)tweet["direct_message"]["id"];
+                        panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
+                        panel.Text = tweet["direct_message"]["text"];
+                        panel.ProfileImage = tweet["direct_message"]["sender"]["profile_image_url_https"];
+                        panel.TimestampWithClient = String.Format("{0}", Extension.ParseDatetime(tweet["direct_message"]["created_at"]));
+                        //listDM.Items.Insert(0, panel);
+                        break;
                 }
-            });
-            /*
-            checkType.Add(() => {
-                if (tweet["delete"])
-                {
-                    
-                }
-            });
-            */
-            checkType.Add(() =>
+
+                //CurrentDispatcher.BeginInvoke((Action)(() => { }));
+            }, CurrentDispatcher.BeginInvoke((Action)(() =>
             {
-                if (json["text"] != null)
-                {
-                    type = JsonType.Normal;
-                }
-            });
-
-            foreach (Action a in checkType)
-            {
-                try { a(); break; }
-                catch { }
-            }
-
-            return type;
+                alertBox.SetMessage("Unable to connect to userstream");
+                alertBox.Visibility = Visibility.Visible;
+            })));
         }
+
+
+
 
         private void beamTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -168,7 +107,7 @@ namespace Beam
             //int i = 0;
             //for (; i < on_img.Length; i++)
             {
-            //    on_img[i].Visibility = Visibility.Collapsed;
+                //    on_img[i].Visibility = Visibility.Collapsed;
                 //off_img[i].Visibility = Visibility.Visible;
             }
         }
@@ -190,5 +129,38 @@ namespace Beam
         }
         */
 
+        public void ChangeView(string viewKey)
+        {
+            if (viewKey != _currentView && viewDict.ContainsKey(viewKey))
+            {
+                ContentWrapper.Content = viewDict[viewKey];
+                pTimeline.Fill = pConnect.Fill = pMessage.Fill = new SolidColorBrush(Color.FromRgb(204, 214, 221));
+                switch (viewKey)
+                {
+                    case "timeline":
+                        pTimeline.Fill = new SolidColorBrush(Color.FromRgb(85, 172, 238));
+                        return;
+                    case "connect":
+                        pConnect.Fill = new SolidColorBrush(Color.FromRgb(85, 172, 238));
+                        return;
+                    case "message":
+                        pMessage.Fill = new SolidColorBrush(Color.FromRgb(85, 172, 238));
+                        return;
+                }
+                
+            }
+
+        }
+
+        Dispatcher CurrentDispatcher
+        {
+            get
+            {
+                if (Application.Current != null)
+                    return Application.Current.Dispatcher;
+                else
+                    return Dispatcher.CurrentDispatcher;
+            }
+        }
     }
 }
