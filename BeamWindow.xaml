@@ -3,17 +3,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:beam="clr-namespace:Beam"
         xmlns:v="clr-namespace:Beam.View"
-        Title="Beam" Height="630" Width="460" WindowStartupLocation="CenterScreen" SnapsToDevicePixels="True">
+        Title="Beam" Height="630" Width="460" WindowStartupLocation="CenterScreen" SnapsToDevicePixels="True" UseLayoutRounding="True">
     <Grid>
-        <Grid OverridesDefaultStyle="True" UseLayoutRounding="True" >
+        <Grid OverridesDefaultStyle="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="32" />
+                <RowDefinition Height="32" x:Name="rdMenu" />
             </Grid.RowDefinitions>
-            
-            <ContentControl Grid.Column="1" x:Name="ContentWrapper"></ContentControl>
 
-            <Grid Grid.Row="1" Height="32" HorizontalAlignment="Stretch">
+            
+            <ContentControl Grid.Column="1" x:Name="ContentWrapper"/>
+            <StackPanel Grid.Column="1" x:Name="ErrorStack" Opacity="0.8"></StackPanel>
+
+            <Grid x:Name="tabMenu" Grid.Row="1" Height="32" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
@@ -35,7 +37,6 @@
                 </Button>
             </Grid>
 
-            <v:AlertBox x:Name="alertBox" Height="20" Background="Red" VerticalAlignment="Top" Margin="0,0,0,0" Visibility="Hidden" />
 
         </Grid>
     </Grid>

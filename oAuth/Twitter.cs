@@ -4,8 +4,6 @@ using System.Web;
 using System.Net;
 using System.IO;
 using System.Threading.Tasks;
-using Beam;
-using System.Windows;
 using System.Windows.Threading;
 
 namespace Beam.oAuth
@@ -17,8 +15,7 @@ namespace Beam.oAuth
         public const string AUTHORIZE = "https://api.twitter.com/oauth/authorize";
         public const string ACCESS_TOKEN = "https://api.twitter.com/oauth/access_token";
         public const string USERSTREAM_URI = "https://userstream.twitter.com/1.1/user.json";
-        private string _consumerKey = "";
-        private string _consumerSecret = "";
+        public const string HOMETIMELINE_URI = "https://api.twitter.com/1.1/statuses/home_timeline.json";
         private string _token = "";
         private string _tokenSecret = "";
         private string _verifier = "";
@@ -28,26 +25,16 @@ namespace Beam.oAuth
         {
             get
             {
-                if (_consumerKey.Length == 0)
-                {
-                    _consumerKey = Properties.Settings.Default["conKey"].ToString();
-                }
-                return _consumerKey;
+                return Properties.Settings.Default["conKey"].ToString();
             }
-            set { _consumerKey = value; }
         }
 
         public string ConsumerSecret
         {
             get
             {
-                if (_consumerSecret.Length == 0)
-                {
-                    _consumerSecret = Properties.Settings.Default["conSec"].ToString();
-                }
-                return _consumerSecret;
+                return Properties.Settings.Default["conSec"].ToString();
             }
-            set { _consumerSecret = value; }
         }
 
         public string Token { get { return _token; } set { _token = value; } }
@@ -87,7 +74,7 @@ namespace Beam.oAuth
             this.Verifier = verifier;
 
             string response = oAuthWebRequest(Method.GET, ACCESS_TOKEN, String.Empty);
-            Console.WriteLine(response);
+
             if (response.Length > 0)
             {
                 //Store the Token and Token Secret
@@ -168,7 +155,7 @@ namespace Beam.oAuth
                 out querystring);
 
             querystring += "&oauth_signature=" + HttpUtility.UrlEncode(sig);
-            Console.WriteLine(querystring);
+            
             //Convert the querystring to postData
             if (method == Method.POST)
             {
@@ -216,8 +203,7 @@ namespace Beam.oAuth
                 out querystring);
 
             querystring += "&oauth_signature=" + HttpUtility.UrlEncode(sig);
-            Console.WriteLine(querystring);
-
+            
             if (querystring.Length > 0)
             {
                 outUrl += "?";

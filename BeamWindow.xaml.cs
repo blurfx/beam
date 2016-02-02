@@ -38,10 +38,11 @@ namespace Beam
             viewDict.Add("timeline", new TimelineView());
 
             ChangeView("init");
-
+            
             if (!String.IsNullOrEmpty(Properties.Settings.Default.token) || !String.IsNullOrEmpty(Properties.Settings.Default.tokenSec))
             {
                 ChangeView("timeline");
+                rdMenu.Height = new GridLength(32);
                 Task.Run(async () => await startStream());
             }
             
@@ -83,34 +84,13 @@ namespace Beam
                 //CurrentDispatcher.BeginInvoke((Action)(() => { }));
             }, CurrentDispatcher.BeginInvoke((Action)(() =>
             {
+                AlertBox alertBox = new AlertBox();
                 alertBox.SetMessage("Unable to connect to userstream");
-                alertBox.Visibility = Visibility.Visible;
+                alertBox.MouseUp += delegate { ErrorStack.Children.Remove(alertBox); alertBox = null; };
+                ErrorStack.Children.Add(alertBox);
             })));
         }
 
-
-
-
-        private void beamTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.Source is TabControl)
-            {
-                resetTabHeaderImage();
-
-            }
-        }
-
-        private void resetTabHeaderImage()
-        {
-            //Image[] on_img = { twitter_on, mention_on, message_on };
-            //Image[] off_img = { twitter_off, mention_off, message_off };
-            //int i = 0;
-            //for (; i < on_img.Length; i++)
-            {
-                //    on_img[i].Visibility = Visibility.Collapsed;
-                //off_img[i].Visibility = Visibility.Visible;
-            }
-        }
         /*
         private void tbTweet_KeyDown(object sender, KeyEventArgs e)
         {
@@ -137,6 +117,10 @@ namespace Beam
                 pTimeline.Fill = pConnect.Fill = pMessage.Fill = new SolidColorBrush(Color.FromRgb(204, 214, 221));
                 switch (viewKey)
                 {
+                    case "init":
+                    case "auth":
+                        rdMenu.Height = new GridLength(0);
+                        return;
                     case "timeline":
                         pTimeline.Fill = new SolidColorBrush(Color.FromRgb(85, 172, 238));
                         return;
