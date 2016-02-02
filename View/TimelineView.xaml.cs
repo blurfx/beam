@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using Beam.Helper;
+using Beam.Model;
+using System.Windows.Controls;
 
 namespace Beam.View
 {
@@ -12,9 +14,12 @@ namespace Beam.View
             InitializeComponent();
         }
 
-        public void InsertTweet()
+        public void InsertTweet(Tweet tweet)
         {
-
+            if (tweet != null)
+            {
+                TweetPanel container = new TweetPanel(tweet);
+            }
         }
     }
 }

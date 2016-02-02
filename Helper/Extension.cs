@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Beam.Model;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -53,39 +54,16 @@ DependencyProperty.RegisterAttached("HoverImage", typeof(string), typeof(Extensi
             return (string)element.GetValue(HoverImageProperty);
         }
 
-        public static TweetType checkTweetType(dynamic json)
+        public static TweetType checkTweetType(string json)
         {
-            List<Action> checkType = new List<Action>();
             TweetType type = TweetType.Init;
-
-            checkType.Add(() =>
+            if (Json.Deserialize<Tweet>(json).Text != null)
             {
-                if (json["direct_message"]["id"] != null)
-                {
-                    type = TweetType.Message;
-
-                }
-            });
-            /*
-            checkType.Add(() => {
-                if (tweet["delete"])
-                {
-                    
-                }
-            });
-            */
-            checkType.Add(() =>
+                type = TweetType.Normal;
+            }
+            else if (Json.Deserialize<MessageWrapper>(json).Message != null)
             {
-                if (json["text"] != null)
-                {
-                    type = TweetType.Normal;
-                }
-            });
-
-            foreach (Action a in checkType)
-            {
-                try { a(); break; }
-                catch { }
+                type = TweetType.Message;
             }
 
             return type;

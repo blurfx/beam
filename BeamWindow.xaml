@@ -13,7 +13,7 @@
 
             
             <ContentControl Grid.Column="1" x:Name="ContentWrapper"/>
-            <StackPanel Grid.Column="1" x:Name="ErrorStack" Opacity="0.8"></StackPanel>
+            <StackPanel Grid.Column="1" x:Name="AlertStack" Opacity="0.8"></StackPanel>
 
             <Grid x:Name="tabMenu" Grid.Row="1" Height="32" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>

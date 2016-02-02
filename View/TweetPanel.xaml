@@ -13,8 +13,8 @@
         </Rectangle>
         <StackPanel>
             <TextBlock x:Name="user" Margin="55,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
-            <TextBlock x:Name="tweet" Margin="55,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
-            <TextBlock x:Name="tc" Margin="55,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
+            <TextBlock x:Name="text" Margin="55,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
+            <TextBlock x:Name="time" Margin="55,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
         </StackPanel>
     </Grid>
 </UserControl>

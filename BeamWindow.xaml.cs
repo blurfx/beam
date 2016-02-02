@@ -10,10 +10,10 @@ using System.Windows.Media;
 using System.Text;
 using System.Collections.Generic;
 using Beam.Helper;
-using static Beam.Helper.Extension;
 using Beam.View;
 using System.Windows.Threading;
-
+using Beam.Model;
+using System.Runtime.Serialization.Json;
 namespace Beam
 {
     /// <summary>
@@ -36,59 +36,80 @@ namespace Beam
             viewDict.Add("init", new InitAuthView());
             viewDict.Add("auth", new TryAuthView());
             viewDict.Add("timeline", new TimelineView());
+            viewDict.Add("connect", new ConnectView());
+            viewDict.Add("message", new MessageView());
 
             ChangeView("init");
             
             if (!String.IsNullOrEmpty(Properties.Settings.Default.token) || !String.IsNullOrEmpty(Properties.Settings.Default.tokenSec))
             {
+                t.Token = Properties.Settings.Default.token;
+                t.TokenSecret = Properties.Settings.Default.tokenSec;
+
                 ChangeView("timeline");
                 rdMenu.Height = new GridLength(32);
                 Task.Run(async () => await startStream());
             }
             
             btTimeline.Click += delegate { ChangeView("timeline"); };
-            btConnect.Click += delegate { ChangeView("auth"); };
-            btMessage.Click += delegate { ChangeView("init"); };
+            btConnect.Click += delegate { ChangeView("connect"); };
+            btMessage.Click += delegate { ChangeView("message"); };
         }
 
         public async Task startStream()
         {
-            await t.singleUserStream(delegate (string json)
-            {
-                JavaScriptSerializer jss = new JavaScriptSerializer();
-                dynamic tweet = jss.Deserialize<dynamic>(System.Net.WebUtility.HtmlDecode(json));
-                TweetType type = checkTweetType(tweet);
-                TweetPanel panel = new TweetPanel();
-                switch (type)
+            await t.singleUserStream(delegate (){
+                CurrentDispatcher.BeginInvoke((Action)(() =>
                 {
+                    AlertBox alertBox = new AlertBox();
+                    alertBox.SetMessage("Connected to userstream");
+                    alertBox.MouseUp += delegate { AlertStack.Children.Remove(alertBox); alertBox = null; };
+                    AlertStack.Children.Add(alertBox);
+                }));
+            },
+            delegate (string json){
+                CurrentDispatcher.BeginInvoke((Action)(() => {
+                    JavaScriptSerializer jss = new JavaScriptSerializer();
+                    json = System.Net.WebUtility.HtmlDecode(json);
+                    Extension.TweetType type = Extension.checkTweetType(json);
+                    if (type != Extension.TweetType.Init)
+                    {
+                        switch (type)
+                        {
 
-                    case TweetType.Normal:
-                        panel.ID = (long)tweet["id"];
-                        panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
-                        panel.Text = tweet["text"];
-                        panel.ProfileImage = tweet["user"]["profile_image_url_https"];
-                        panel.TimestampWithClient = String.Format("{0} / via {1}", Extension.ParseDatetime(tweet["created_at"]), Extension.ParseClientSource(tweet["source"]));
-
-                        //((TimelineView)viewDict["timeline"]).InsertTweet();// listTweet.Items.Insert(0, panel);
-                        break;
-                    case TweetType.Message:
-                        panel.ID = (long)tweet["direct_message"]["id"];
-                        panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
-                        panel.Text = tweet["direct_message"]["text"];
-                        panel.ProfileImage = tweet["direct_message"]["sender"]["profile_image_url_https"];
-                        panel.TimestampWithClient = String.Format("{0}", Extension.ParseDatetime(tweet["direct_message"]["created_at"]));
-                        //listDM.Items.Insert(0, panel);
-                        break;
-                }
-
-                //CurrentDispatcher.BeginInvoke((Action)(() => { }));
-            }, CurrentDispatcher.BeginInvoke((Action)(() =>
-            {
-                AlertBox alertBox = new AlertBox();
-                alertBox.SetMessage("Unable to connect to userstream");
-                alertBox.MouseUp += delegate { ErrorStack.Children.Remove(alertBox); alertBox = null; };
-                ErrorStack.Children.Add(alertBox);
-            })));
+                            case Extension.TweetType.Normal:
+                                Tweet tweet = Json.Deserialize<Tweet>(json);
+                                /*panel.ID = (long)tweet["id"];
+                                panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
+                                panel.Text = tweet["text"];
+                                Console.WriteLine(tweet["text"]);
+                                panel.ProfileImage = tweet["user"]["profile_image_url_https"];
+                                panel.TimestampWithClient = String.Format("{0} / via {1}", Extension.ParseDatetime(tweet["created_at"]), Extension.ParseClientSource(tweet["source"]));*/
+                                ((TimelineView)viewDict["timeline"]).InsertTweet(tweet);
+                                break;
+                            case Extension.TweetType.Message:
+                                Message d_message = Json.Deserialize<MessageWrapper>(json).Message;
+                                
+                                /*panel.ID = (long)tweet["direct_message"]["id"];
+                                panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
+                                panel.Text = tweet["direct_message"]["text"];
+                                panel.ProfileImage = tweet["direct_message"]["sender"]["profile_image_url_https"];
+                                panel.TimestampWithClient = String.Format("{0}", Extension.ParseDatetime(tweet["direct_message"]["created_at"]));*/
+                                //listDM.Items.Insert(0, panel);
+                                break;
+                        }
+                        
+                    }
+                }));
+            }, delegate (){
+                CurrentDispatcher.BeginInvoke((Action)(() =>
+                {
+                    AlertBox alertBox = new AlertBox();
+                    alertBox.SetMessage("Unable to connect to userstream",AlertBox.MessageType.Error);
+                    alertBox.MouseUp += delegate { AlertStack.Children.Remove(alertBox); alertBox = null; };
+                    AlertStack.Children.Add(alertBox);
+                }));
+            });
         }
 
         /*

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Beam.Model;
+using System;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
@@ -7,20 +8,17 @@ namespace Beam.View
     /// <summary>
     /// TweetPanel.xaml에 대한 상호 작용 논리
     /// </summary>
+    
     public partial class TweetPanel : UserControl
     {
-        long id = 0;
-
-        public TweetPanel()
+        object _tweet;
+        public TweetPanel(object tweet)
         {
+            _tweet = tweet;
             InitializeComponent();
+            
         }
 
-        public long ID
-        {
-            get { return id; }
-            set { id = value; }
-        }
 
         public string Username
         {
@@ -37,17 +35,6 @@ namespace Beam.View
                 img.EndInit();
                 profile.ImageSource = img;
             }
-        }
-
-        public string Text
-        {
-            get { return tweet.Text; }
-            set { tweet.Text = value; }
-        }
-
-        public string TimestampWithClient
-        {
-            set { tc.Text = value; }
         }
     }
 }

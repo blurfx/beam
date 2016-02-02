@@ -18,7 +18,7 @@ namespace Beam.View
 
         private void btSignIn_Click(object sender, RoutedEventArgs e)
         {
-            BeamWindow beam = (BeamWindow)this.Parent;
+            BeamWindow beam = (BeamWindow)Application.Current.MainWindow;
             beam.t = new Twitter();
             Uri uri = new Uri(beam.t.AuthorizationLinkGet());
             System.Diagnostics.Process.Start(uri.ToString());

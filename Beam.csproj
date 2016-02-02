@@ -36,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
@@ -60,14 +61,24 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Helper\Extension.cs" />
+    <Compile Include="Helper\Json.cs" />
+    <Compile Include="Model\Message.cs" />
+    <Compile Include="Model\Tweet.cs" />
+    <Compile Include="Model\User.cs" />
     <Compile Include="PostDialog.xaml.cs">
       <DependentUpon>PostDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\AlertBox.xaml.cs">
       <DependentUpon>AlertBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\ConnectView.xaml.cs">
+      <DependentUpon>ConnectView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\InitAuthView.xaml.cs">
       <DependentUpon>InitAuthView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MessageView.xaml.cs">
+      <DependentUpon>MessageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\TimelineView.xaml.cs">
       <DependentUpon>TimelineView.xaml</DependentUpon>
@@ -126,7 +137,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\ConnectView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\InitAuthView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MessageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

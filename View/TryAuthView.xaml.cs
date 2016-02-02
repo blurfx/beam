@@ -16,7 +16,7 @@ namespace Beam.View
 
         private async void btPinAuth_Click(object sender, RoutedEventArgs e)
         {
-            BeamWindow beam = (BeamWindow)this.Parent;
+            BeamWindow beam = (BeamWindow)Application.Current.MainWindow;
 
             if (String.IsNullOrEmpty(Properties.Settings.Default.token) || String.IsNullOrEmpty(Properties.Settings.Default.tokenSec))
             {

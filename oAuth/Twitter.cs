@@ -178,7 +178,7 @@ namespace Beam.oAuth
         /// </summary>
         /// <param name="url">The full url, including the querystring.</param>
         /// <returns>The web server response.</returns>
-        public async Task singleUserStream(Action<string> streamCallback, DispatcherOperation errorCallback = null)
+        public async Task singleUserStream(Action onConnectCallback, Action<string> streamCallback,Action onErrorCallback)
         {
             Method method = Method.GET;
             string outUrl = "";
@@ -220,6 +220,7 @@ namespace Beam.oAuth
                 using (StreamReader responseReader = new StreamReader(webRequest.GetResponse().GetResponseStream()))
                 {
                     string json;
+                    onConnectCallback();
                     while ((json = await responseReader.ReadLineAsync()) != null)
                     {
                         if (!String.IsNullOrWhiteSpace(json))
@@ -229,10 +230,10 @@ namespace Beam.oAuth
                         }
                     }
                 }
-            } catch
-            {
-                if (errorCallback != null)
-                    errorCallback.Task.Start();
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+                if (onErrorCallback != null)
+                    onErrorCallback();
             }
             webRequest.GetResponse().GetResponseStream().Close();
             webRequest = null;

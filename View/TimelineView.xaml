@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Beam.View"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <ListView x:Name="listTweet" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden" BorderBrush="{x:Null}" >
+    <ListView x:Name="lTweet" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden" BorderBrush="{x:Null}" >
         <ListView.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="답장(_R)" />
