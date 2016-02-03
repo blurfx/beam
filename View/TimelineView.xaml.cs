@@ -17,9 +17,7 @@ namespace Beam.View
         public void InsertTweet(Tweet tweet)
         {
             if (tweet != null)
-            {
-                TweetPanel container = new TweetPanel(tweet);
-            }
+                lTweet.Items.Insert(0,new TweetPanel(tweet));
         }
     }
 }

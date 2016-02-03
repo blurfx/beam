@@ -11,14 +11,14 @@ namespace Beam.View
     
     public partial class TweetPanel : UserControl
     {
-        object _tweet;
+        Tweet _tweet;
         public TweetPanel(object tweet)
         {
-            _tweet = tweet;
+            _tweet = (Tweet)tweet;
+            DataContext = _tweet;
             InitializeComponent();
-            
         }
-
+        
 
         public string Username
         {
@@ -26,15 +26,5 @@ namespace Beam.View
             set { user.Text = value; }
         }
 
-        public string ProfileImage
-        {
-            set {
-                BitmapImage img = new BitmapImage();
-                img.BeginInit();
-                img.UriSource = new Uri(value);
-                img.EndInit();
-                profile.ImageSource = img;
-            }
-        }
     }
 }

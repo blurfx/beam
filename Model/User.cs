@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 
 namespace Beam.Model
@@ -11,6 +12,8 @@ namespace Beam.Model
     [DataContract]
     public class User
     {
+        private string _profileBannerUrl, _profileImageUrl;
+        
         [DataMember(Name="id")]
         public long Id { get; set; }
         
@@ -50,21 +53,32 @@ namespace Beam.Model
         [DataMember(Name="created_at")]
         public string CreatedAt { get; set; }
         
-        [DataMember(Name="profile_background_image_url")]
-        public string ProfileBackgroundImageUrl { get; set; }
-        
-        [DataMember(Name="profile_background_image_url_https")]
-        public string ProfileBackgroundImageUrlSSL { get; set; }
-        
-        [DataMember(Name="profile_background_tile")]
-        public bool hasProfileBackground { get; set; }
-        
-        [DataMember(Name="profile_image_url")]
-        public string ProfileImageUrl { get; set; }
+        //[DataMember(Name="profile_background_image_url")]
+        //public string ProfileBackgroundImageUrl { get; set; }
+
+        [DataMember(Name = "profile_banner_url")]
+        public string ProfileBannerUrl {
+            get { return _profileBannerUrl;}
+            set {
+                _profileBannerUrl = value;
+                ProfileBannerImage = new BitmapImage(new Uri(value));
+            }
+        }
+
+        public BitmapImage ProfileBannerImage { get; set; }
         
         [DataMember(Name="profile_image_url_https")]
-        public string ProfileImageUrlSSL { get; set; }
-        
+        public string ProfileImageUrlSSL {
+            get { return _profileImageUrl; }
+            set {
+                _profileImageUrl = value;
+
+                ProfileImage = new BitmapImage(new Uri(value));
+            }
+        }
+
+        public BitmapImage ProfileImage { get; set; }
+
         [DataMember(Name="following")]
         public bool? Following { get; set; }
         

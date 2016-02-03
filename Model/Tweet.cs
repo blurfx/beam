@@ -35,11 +35,17 @@ namespace Beam.Model
         [DataMember(Name="user")]
         public User User { get; set; }
 
+        [DataMember(Name = "retweeted_status")]
+        public Tweet RetweetedTweet { get; set; }
+
         [DataMember(Name="retweet_count")]
         public int RetweetCount { get; set; }
 
         [DataMember(Name="favorite_count")]
         public int FavoriteCount { get; set; }
+
+        [DataMember(Name = "entities")]
+        public Entities Entities { get; set; }
 
         [DataMember(Name="favorited")]
         public bool Favorited { get; set; }
@@ -48,7 +54,7 @@ namespace Beam.Model
         public bool Retweeted { get; set; }
         
         /* todo 
-         * geo, coordinates, place, contributors, retweeted_status,entities,
+         * geo, coordinates, place, contributors
          */
     }
 }

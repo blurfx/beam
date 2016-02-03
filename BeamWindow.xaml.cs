@@ -62,9 +62,13 @@ namespace Beam
                 CurrentDispatcher.BeginInvoke((Action)(() =>
                 {
                     AlertBox alertBox = new AlertBox();
+                    DispatcherTimer alertTimeout = new DispatcherTimer();
                     alertBox.SetMessage("Connected to userstream");
-                    alertBox.MouseUp += delegate { AlertStack.Children.Remove(alertBox); alertBox = null; };
+                    alertTimeout.Interval = TimeSpan.FromSeconds(5);
+                    alertTimeout.Tick += delegate { alertTimeout.Stop(); AlertStack.Children.Remove(alertBox); alertBox = null; alertTimeout = null; };
+                    alertBox.MouseUp  += delegate { alertTimeout.Stop(); AlertStack.Children.Remove(alertBox); alertBox = null; alertTimeout = null; };
                     AlertStack.Children.Add(alertBox);
+                    alertTimeout.Start();
                 }));
             },
             delegate (string json){
@@ -105,9 +109,13 @@ namespace Beam
                 CurrentDispatcher.BeginInvoke((Action)(() =>
                 {
                     AlertBox alertBox = new AlertBox();
+                    DispatcherTimer alertTimeout = new DispatcherTimer();
                     alertBox.SetMessage("Unable to connect to userstream",AlertBox.MessageType.Error);
-                    alertBox.MouseUp += delegate { AlertStack.Children.Remove(alertBox); alertBox = null; };
+                    alertTimeout.Interval = TimeSpan.FromSeconds(5);
+                    alertTimeout.Tick += delegate { alertTimeout.Stop(); AlertStack.Children.Remove(alertBox); alertBox = null; alertTimeout = null; };
+                    alertBox.MouseUp += delegate { alertTimeout.Stop(); AlertStack.Children.Remove(alertBox); alertBox = null; alertTimeout = null; };
                     AlertStack.Children.Add(alertBox);
+                    alertTimeout.Start();
                 }));
             });
         }

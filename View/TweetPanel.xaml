@@ -8,12 +8,16 @@
     <Grid x:Name="grdBack" Margin="0,5,25,5">
         <Rectangle Width="40" Height="40" Margin="5,5,0,5" RadiusX="20" RadiusY="20" HorizontalAlignment="Left" > 
             <Rectangle.Fill>
-                <ImageBrush x:Name="profile" />
+                <ImageBrush x:Name="profile" ImageSource="{Binding User.ProfileImage}" />
             </Rectangle.Fill>
         </Rectangle>
         <StackPanel>
-            <TextBlock x:Name="user" Margin="55,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
-            <TextBlock x:Name="text" Margin="55,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
+            <TextBlock x:Name="user" Margin="55,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap">
+                <Run Text="{Binding Path=User.ScreenName}" />
+                <Run Text=" / "/>
+                <Run Text="{Binding Path=User.Name}" />
+            </TextBlock>
+            <TextBlock x:Name="text" Margin="55,0,0,0" Text="{Binding Path=Text}" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
             <TextBlock x:Name="time" Margin="55,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" />
         </StackPanel>
     </Grid>
