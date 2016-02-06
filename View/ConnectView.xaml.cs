@@ -1,5 +1,4 @@
-﻿using Beam.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,14 +24,10 @@ namespace Beam.View
         {
             InitializeComponent();
         }
-        public void InsertTweet(Tweet tweet)
+        public void InsertTweet(TweetPanel tweet)
         {
             if (tweet != null)
-            {
-                if (lConnect.Items.Count != 0)
-                    lConnect.Items.Insert(0, new Separator());
-                lConnect.Items.Insert(0, new TweetPanel(tweet));
-            }
+                lConnect.Items.Insert(0, tweet);
         }
     }
 }

@@ -41,7 +41,7 @@
                 </Setter>
             </Style>
 
-             <Style x:Key="AltItemBackground" TargetType="{x:Type ListViewItem}">
+            <Style x:Key="AltItemBackground" TargetType="{x:Type ListViewItem}">
                 <Style.Triggers>
                     <Trigger Property="ItemsControl.AlternationIndex" Value="0">
                         <Setter Property="Background" Value="White"></Setter>

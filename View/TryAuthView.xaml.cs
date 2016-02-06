@@ -1,7 +1,4 @@
-﻿using Beam.Helper;
-using Beam.Model;
-using Beam.oAuth;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -34,13 +31,13 @@ namespace Beam.View
                     tbPIN.Text = String.Empty;
                     return;
                 }
+                //Console.WriteLine(t.oAuthWebRequest(Twitter.Method.GET, "https://api.twitter.com/1.1/account/verify_credentials.json", String.Empty));
             }
             else
             {
                 beam.t.Token = Properties.Settings.Default.token;
                 beam.t.TokenSecret = Properties.Settings.Default.tokenSec;
             }
-            beam.me = Json.Deserialize<User>(beam.t.oAuthWebRequest(Twitter.Method.GET, "https://api.twitter.com/1.1/account/verify_credentials.json", String.Empty));
             beam.rdMenu.Height = new GridLength(32);
             beam.ChangeView("timeline");
             await beam.startStream();

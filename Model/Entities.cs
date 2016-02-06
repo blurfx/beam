@@ -10,13 +10,13 @@ namespace Beam.Model
     public class Entities
     {
         [DataMember(Name = "user_mentions")]
-        public List<Mention> Mentions { get; set; }
+        List<Mention> Mentions { get; set; }
 
         [DataMember(Name = "urls")]
-        public List<Urls> Urls { get; set; }
+        List<Urls> Urls { get; set; }
 
         [DataMember(Name = "media")]
-        public List<Media> Media { get; set; }
+        List<Media> Media { get; set; }
     }
 
     [DataContract]

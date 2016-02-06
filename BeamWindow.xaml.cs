@@ -24,7 +24,6 @@ namespace Beam
     {
 
         public Twitter t = new Twitter();
-        public User me = new User();
         string _currentView = null;
 
 
@@ -48,7 +47,6 @@ namespace Beam
                 t.TokenSecret = Properties.Settings.Default.tokenSec;
 
                 ChangeView("timeline");
-                me = Json.Deserialize<User>(t.oAuthWebRequest(Twitter.Method.GET, "https://api.twitter.com/1.1/account/verify_credentials.json", String.Empty));
                 rdMenu.Height = new GridLength(32);
                 Task.Run(async () => await startStream());
             }
@@ -92,14 +90,6 @@ namespace Beam
                                 panel.ProfileImage = tweet["user"]["profile_image_url_https"];
                                 panel.TimestampWithClient = String.Format("{0} / via {1}", Extension.ParseDatetime(tweet["created_at"]), Extension.ParseClientSource(tweet["source"]));*/
                                 ((TimelineView)viewDict["timeline"]).InsertTweet(tweet);
-                                if(tweet.Entities.Mentions.Count != 0)
-                                {
-                                    bool _Mentioned = false;
-                                    foreach (Mention m in tweet.Entities.Mentions)
-                                        if (m.Id == me.Id) _Mentioned = true;
-                                    if (tweet.Text.ToLower().Contains("@" + me.ScreenName.ToLower())) _Mentioned = true;
-                                    if(_Mentioned) ((ConnectView)viewDict["connect"]).InsertTweet(tweet);
-                                }
                                 break;
                             case Extension.TweetType.Message:
                                 Message d_message = Json.Deserialize<MessageWrapper>(json).Message;
