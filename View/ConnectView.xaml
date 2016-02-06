@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <ListView x:Name="lConnect" ItemContainerStyle="{DynamicResource AltItemBackground}" AlternationCount="2" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden" BorderBrush="{x:Null}" >
+    <ListView x:Name="lConnect" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Hidden" BorderBrush="{x:Null}" >
         <ListView.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="답장(_R)" />
