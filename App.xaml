@@ -42,6 +42,55 @@
             </Style>
 
              <Style x:Key="AltItemBackground" TargetType="{x:Type ListViewItem}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                            <StackPanel>
+                                <Separator x:Name="Separator" />
+                                <Border BorderThickness="{TemplateBinding Border.BorderThickness}" 
+                                    Padding="{TemplateBinding Control.Padding}" 
+                                    BorderBrush="{TemplateBinding Border.BorderBrush}" 
+                                    Background="{TemplateBinding Panel.Background}" 
+                                    Name="Bd" SnapsToDevicePixels="True">
+                                    <ContentPresenter Content="{TemplateBinding ContentControl.Content}" 
+                                                  ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" 
+                                                  ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" 
+                                                  HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" 
+                                                  VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" 
+                                                  SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                                </Border>
+                            </StackPanel>
+                            <ControlTemplate.Triggers>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="UIElement.IsMouseOver" Value="True" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Panel.Background" TargetName="Bd" Value="#1F26A0DA" />
+                                    <Setter Property="Border.BorderBrush" TargetName="Bd" Value="#A826A0DA" />
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="Selector.IsSelectionActive" Value="False" />
+                                        <Condition Property="Selector.IsSelected" Value="True" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Panel.Background" TargetName="Bd" Value="#3DDADADA" />
+                                    <Setter Property="Border.BorderBrush" TargetName="Bd" Value="#FFDADADA" />
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="Selector.IsSelectionActive" Value="True" />
+                                        <Condition Property="Selector.IsSelected" Value="True" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Panel.Background" TargetName="Bd" Value="#3D26A0DA" />
+                                    <Setter Property="Border.BorderBrush" TargetName="Bd" Value="#FF26A0DA" />
+                                </MultiTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                 
                 <Style.Triggers>
                     <Trigger Property="ItemsControl.AlternationIndex" Value="0">
                         <Setter Property="Background" Value="White"></Setter>

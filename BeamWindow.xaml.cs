@@ -48,7 +48,14 @@ namespace Beam
                 t.TokenSecret = Properties.Settings.Default.tokenSec;
 
                 ChangeView("timeline");
-                me = Json.Deserialize<User>(t.oAuthWebRequest(Twitter.Method.GET, "https://api.twitter.com/1.1/account/verify_credentials.json", String.Empty));
+                try
+                {
+                    me = Json.Deserialize<User>(t.oAuthWebRequest(Twitter.Method.GET, "https://api.twitter.com/1.1/account/verify_credentials.json", String.Empty));
+                } catch {
+                    showAlert("Unable to connect to Twitter",AlertBox.MessageType.Error);
+                }
+
+
                 rdMenu.Height = new GridLength(32);
                 Task.Run(async () => await startStream());
             }
@@ -63,35 +70,21 @@ namespace Beam
             await t.singleUserStream(delegate (){
                 CurrentDispatcher.BeginInvoke((Action)(() =>
                 {
-                    AlertBox alertBox = new AlertBox();
-                    DispatcherTimer alertTimeout = new DispatcherTimer();
-                    alertBox.SetMessage("Connected to userstream");
-                    alertTimeout.Interval = TimeSpan.FromSeconds(5);
-                    alertTimeout.Tick += delegate { alertTimeout.Stop(); AlertStack.Children.Remove(alertBox); alertBox = null; alertTimeout = null; };
-                    alertBox.MouseUp  += delegate { alertTimeout.Stop(); AlertStack.Children.Remove(alertBox); alertBox = null; alertTimeout = null; };
-                    AlertStack.Children.Add(alertBox);
-                    alertTimeout.Start();
+                    showAlert("Connected to userstream");
                 }));
             },
             delegate (string json){
                 CurrentDispatcher.BeginInvoke((Action)(() => {
-                    JavaScriptSerializer jss = new JavaScriptSerializer();
                     json = System.Net.WebUtility.HtmlDecode(json);
                     Extension.TweetType type = Extension.checkTweetType(json);
                     if (type != Extension.TweetType.Init)
                     {
                         switch (type)
                         {
-
                             case Extension.TweetType.Normal:
                                 Tweet tweet = Json.Deserialize<Tweet>(json);
-                                /*panel.ID = (long)tweet["id"];
-                                panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
-                                panel.Text = tweet["text"];
-                                Console.WriteLine(tweet["text"]);
-                                panel.ProfileImage = tweet["user"]["profile_image_url_https"];
-                                panel.TimestampWithClient = String.Format("{0} / via {1}", Extension.ParseDatetime(tweet["created_at"]), Extension.ParseClientSource(tweet["source"]));*/
                                 ((TimelineView)viewDict["timeline"]).InsertTweet(tweet);
+
                                 if(tweet.Entities.Mentions.Count != 0)
                                 {
                                     bool _Mentioned = false;
@@ -100,16 +93,16 @@ namespace Beam
                                     if (tweet.Text.ToLower().Contains("@" + me.ScreenName.ToLower())) _Mentioned = true;
                                     if(_Mentioned) ((ConnectView)viewDict["connect"]).InsertTweet(tweet);
                                 }
-                                break;
-                            case Extension.TweetType.Message:
-                                Message d_message = Json.Deserialize<MessageWrapper>(json).Message;
                                 
-                                /*panel.ID = (long)tweet["direct_message"]["id"];
-                                panel.Username = String.Format("{0}/{1}", tweet["user"]["screen_name"], tweet["user"]["name"]);
-                                panel.Text = tweet["direct_message"]["text"];
-                                panel.ProfileImage = tweet["direct_message"]["sender"]["profile_image_url_https"];
-                                panel.TimestampWithClient = String.Format("{0}", Extension.ParseDatetime(tweet["direct_message"]["created_at"]));*/
-                                //listDM.Items.Insert(0, panel);
+                                break;
+
+                            case Extension.TweetType.Message:
+                                Message message = Json.Deserialize<MessageWrapper>(json).Message;
+                                break;
+
+                            case Extension.TweetType.Delete:
+                                DeletedStatus status = Json.Deserialize<DeleteWrapper>(json).Delete.Status;
+                                ((TimelineView)viewDict["timeline"]).RemoveTweet(status.Id);
                                 break;
                         }
                         
@@ -118,14 +111,7 @@ namespace Beam
             }, delegate (){
                 CurrentDispatcher.BeginInvoke((Action)(() =>
                 {
-                    AlertBox alertBox = new AlertBox();
-                    DispatcherTimer alertTimeout = new DispatcherTimer();
-                    alertBox.SetMessage("Unable to connect to userstream",AlertBox.MessageType.Error);
-                    alertTimeout.Interval = TimeSpan.FromSeconds(5);
-                    alertTimeout.Tick += delegate { alertTimeout.Stop(); AlertStack.Children.Remove(alertBox); alertBox = null; alertTimeout = null; };
-                    alertBox.MouseUp += delegate { alertTimeout.Stop(); AlertStack.Children.Remove(alertBox); alertBox = null; alertTimeout = null; };
-                    AlertStack.Children.Add(alertBox);
-                    alertTimeout.Start();
+                    showAlert("Unable to connect to userstream",AlertBox.MessageType.Error);
                 }));
             });
         }
@@ -184,6 +170,19 @@ namespace Beam
                 else
                     return Dispatcher.CurrentDispatcher;
             }
+        }
+
+        public void showAlert(string message, AlertBox.MessageType type = AlertBox.MessageType.Success)
+        {
+            AlertBox alertBox = new AlertBox();
+            DispatcherTimer alertTimeout = new DispatcherTimer();
+            alertBox.SetMessage(message,type);
+            alertTimeout.Interval = TimeSpan.FromSeconds(5);
+            alertTimeout.Tick += delegate { alertTimeout.Stop(); AlertStack.Children.Remove(alertBox); alertBox = null; alertTimeout = null; };
+            alertBox.MouseUp += delegate { alertTimeout.Stop(); AlertStack.Children.Remove(alertBox); alertBox = null; alertTimeout = null; };
+            AlertStack.Children.Add(alertBox);
+            alertTimeout.Start();
+
         }
     }
 }

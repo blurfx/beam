@@ -25,14 +25,14 @@ namespace Beam.View
         {
             InitializeComponent();
         }
-        public void InsertTweet(Tweet tweet)
+        public TweetPanel InsertTweet(Tweet tweet)
         {
-            if (tweet != null)
-            {
-                if (lConnect.Items.Count != 0)
-                    lConnect.Items.Insert(0, new Separator());
-                lConnect.Items.Insert(0, new TweetPanel(tweet));
+            if (tweet != null){
+                TweetPanel panel = new TweetPanel(tweet);
+                lConnect.Items.Insert(0, panel);
+                return panel;
             }
+            return null;
         }
     }
 }

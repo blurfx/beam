@@ -57,6 +57,7 @@ DependencyProperty.RegisterAttached("HoverImage", typeof(string), typeof(Extensi
         public static TweetType checkTweetType(string json)
         {
             TweetType type = TweetType.Init;
+            
             if (Json.Deserialize<Tweet>(json).Text != null)
             {
                 type = TweetType.Normal;
@@ -64,6 +65,10 @@ DependencyProperty.RegisterAttached("HoverImage", typeof(string), typeof(Extensi
             else if (Json.Deserialize<MessageWrapper>(json).Message != null)
             {
                 type = TweetType.Message;
+            }
+            else if (Json.Deserialize<DeleteWrapper>(json).Delete != null)
+            {
+                type = TweetType.Delete;
             }
 
             return type;

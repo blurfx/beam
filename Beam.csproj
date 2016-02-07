@@ -62,6 +62,7 @@
     </Compile>
     <Compile Include="Helper\Extension.cs" />
     <Compile Include="Helper\Json.cs" />
+    <Compile Include="Model\Delete.cs" />
     <Compile Include="Model\Entities.cs" />
     <Compile Include="Model\Message.cs" />
     <Compile Include="Model\Tweet.cs" />

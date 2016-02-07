@@ -1,5 +1,6 @@
 ﻿using Beam.Helper;
 using Beam.Model;
+using System.Collections.Generic;
 using System.Windows.Controls;
 
 namespace Beam.View
@@ -14,15 +15,23 @@ namespace Beam.View
             InitializeComponent();
         }
 
-        public void InsertTweet(Tweet tweet)
+        Dictionary<long, TweetPanel> dict = new Dictionary<long, TweetPanel>();
+
+        public TweetPanel InsertTweet(Tweet tweet)
         {
             if (tweet != null)
             {
-                if (lTweet.Items.Count != 0)
-                    lTweet.Items.Insert(0, new Separator());
-                lTweet.Items.Insert(0, new TweetPanel(tweet));
-                
+                TweetPanel panel = new TweetPanel(tweet);
+                lTweet.Items.Insert(0, panel);
+                dict.Add(tweet.Id, panel);
+                return panel;
             }
+            return null;
+        }
+
+        public void RemoveTweet(long Id){
+            if(dict.ContainsKey(Id))
+                lTweet.Items.Remove(dict[Id]);
         }
     }
 }
