@@ -23,7 +23,7 @@ namespace Beam.View
             Uri uri = new Uri(beam.t.AuthorizationLinkGet());
             System.Diagnostics.Process.Start(uri.ToString());
             beam.t.Token = HttpUtility.ParseQueryString(uri.Query)["oauth_token"];
-            
+            beam.ChangeView("auth");
         }
 
     }

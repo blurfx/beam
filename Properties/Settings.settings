@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="conKey" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">dhbxwDam7s2lhA6Yr2RPOElxR</Value>
     </Setting>
     <Setting Name="conSec" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">eyHkkxac0eVNwUc0BkUK6v5makTtAchDZhV6C9l79i1K9xWIro</Value>
     </Setting>
     <Setting Name="token" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
