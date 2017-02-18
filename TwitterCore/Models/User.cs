@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 
-namespace Beam.Model
+namespace Beam.TwitterCore.Models
 {
     [DataContract]
     public class User

@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Beam.Model
+namespace Beam.TwitterCore.Models
 {
     [DataContract]
     public class DeleteWrapper {

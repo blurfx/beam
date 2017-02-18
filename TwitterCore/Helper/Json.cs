@@ -6,7 +6,7 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Beam.Helper
+namespace Beam.TwitterCore.Helper
 {
     public class Json
     {

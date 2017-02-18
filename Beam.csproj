@@ -63,13 +63,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Helper\Extension.cs" />
-    <Compile Include="Helper\Json.cs" />
-    <Compile Include="Model\Delete.cs" />
-    <Compile Include="Model\Entities.cs" />
-    <Compile Include="Model\Message.cs" />
-    <Compile Include="Model\Tweet.cs" />
-    <Compile Include="Model\User.cs" />
+    <Compile Include="TwitterCore\Helper\Extension.cs" />
+    <Compile Include="TwitterCore\Helper\Json.cs" />
+    <Compile Include="TwitterCore\Models\Delete.cs" />
+    <Compile Include="TwitterCore\Models\Entities.cs" />
+    <Compile Include="TwitterCore\Models\Message.cs" />
+    <Compile Include="TwitterCore\Models\Tweet.cs" />
+    <Compile Include="TwitterCore\Models\User.cs" />
     <Compile Include="PostDialog.xaml.cs">
       <DependentUpon>PostDialog.xaml</DependentUpon>
     </Compile>
@@ -99,8 +99,8 @@
     <Compile Include="BeamWindow.xaml.cs">
       <DependentUpon>BeamWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="oAuth\oAuth.cs" />
-    <Compile Include="oAuth\Twitter.cs" />
+    <Compile Include="TwitterCore\oAuth\oAuth.cs" />
+    <Compile Include="TwitterCore\oAuth\Twitter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

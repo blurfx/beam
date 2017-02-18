@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace Beam.Model
+namespace Beam.TwitterCore.Models
 {
     [DataContract]
     public class Entities
