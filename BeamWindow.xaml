@@ -11,7 +11,6 @@
                 <RowDefinition Height="32" x:Name="rdMenu" />
             </Grid.RowDefinitions>
 
-            
             <ContentControl Grid.Column="1" x:Name="ContentWrapper"/>
             <StackPanel Grid.Column="1" x:Name="AlertStack" Opacity="0.8"></StackPanel>
 
