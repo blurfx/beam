@@ -1,16 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 
 namespace Beam.TwitterCore.oAuth
 {
-    internal class oAuth
+    public class oAuth
     {
-        /// <summary>
-        /// Provides a predefined set of algorithms that are supported officially by the protocol
-        /// </summary>
+        public enum Method { GET, POST };
+
+        #region Properties
+        public string ConsumerKey
+        {
+            get; set;
+        }
+
+        public string ConsumerSecret
+        {
+            get; set;
+        }
+
+        public string AccessToken { get; set; }
+        public string AccessTokenSecret { get; set; }
+        public string Verifier { get; set; }
+
+        #endregion
+
         public enum SignatureTypes
         {
             HMACSHA1,
@@ -18,9 +37,6 @@ namespace Beam.TwitterCore.oAuth
             RSASHA1
         }
 
-        /// <summary>
-        /// Provides an internal structure to sort the query parameter
-        /// </summary>
         protected class QueryParameter
         {
             private string name = null;
@@ -43,12 +59,8 @@ namespace Beam.TwitterCore.oAuth
             }
         }
 
-        /// <summary>
-        /// Comparer class used to perform the sorting of the query parameters
-        /// </summary>
         protected class QueryParameterComparer : IComparer<QueryParameter>
         {
-
             #region IComparer<QueryParameter> Members
 
             public int Compare(QueryParameter x, QueryParameter y)
@@ -66,37 +78,165 @@ namespace Beam.TwitterCore.oAuth
             #endregion
         }
 
-        protected const string OAuthVersion = "1.0";
-        protected const string OAuthParameterPrefix = "oauth_";
+        private const string OAuthVersion = "1.0";
+        private const string OAuthParameterPrefix = "oauth_";
 
-        //
-        // List of know and used oauth parameters' names
-        //        
-        protected const string OAuthConsumerKeyKey = "oauth_consumer_key";
-        protected const string OAuthCallbackKey = "oauth_callback";
-        protected const string OAuthVersionKey = "oauth_version";
-        protected const string OAuthSignatureMethodKey = "oauth_signature_method";
-        protected const string OAuthSignatureKey = "oauth_signature";
-        protected const string OAuthTimestampKey = "oauth_timestamp";
-        protected const string OAuthNonceKey = "oauth_nonce";
-        protected const string OAuthTokenKey = "oauth_token";
-        protected const string OAuthTokenSecretKey = "oauth_token_secret";
-        protected const string OAuthVerifier = "oauth_verifier";
+        private const string OAuthConsumerKeyKey = "oauth_consumer_key";
+        private const string OAuthCallbackKey = "oauth_callback";
+        private const string OAuthVersionKey = "oauth_version";
+        private const string OAuthSignatureMethodKey = "oauth_signature_method";
+        private const string OAuthSignatureKey = "oauth_signature";
+        private const string OAuthTimestampKey = "oauth_timestamp";
+        private const string OAuthNonceKey = "oauth_nonce";
+        private const string OAuthTokenKey = "oauth_token";
+        private const string OAuthTokenSecretKey = "oauth_token_secret";
+        private const string OAuthVerifier = "oauth_verifier";
 
-        protected const string HMACSHA1SignatureType = "HMAC-SHA1";
-        protected const string PlainTextSignatureType = "PLAINTEXT";
-        protected const string RSASHA1SignatureType = "RSA-SHA1";
+        private const string HMACSHA1SignatureType = "HMAC-SHA1";
+        private const string PlainTextSignatureType = "PLAINTEXT";
+        private const string RSASHA1SignatureType = "RSA-SHA1";
 
-        protected Random random = new Random();
+        private Random random = new Random();
 
-        protected string unreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
+        private string unreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
 
-        /// <summary>
-        /// Helper function to compute a hash value
-        /// </summary>
-        /// <param name="hashAlgorithm">The hashing algoirhtm used. If that algorithm needs some initialization, like HMAC and its derivatives, they should be initialized prior to passing it to this function</param>
-        /// <param name="data">The data to hash</param>
-        /// <returns>a Base64 string of the hash value</returns>
+        public string WebRequest(Method method, string url, string postData)
+        {
+            HttpWebRequest webRequest = null;
+            StreamWriter requestWriter = null;
+            string responseData = "";
+
+            webRequest = System.Net.WebRequest.Create(url) as HttpWebRequest;
+            webRequest.Method = method.ToString();
+            webRequest.ServicePoint.Expect100Continue = false;
+            //webRequest.UserAgent  = "Identify your application please.";
+            //webRequest.Timeout = 20000;
+
+            if (method == Method.POST)
+            {
+                webRequest.ContentType = "application/x-www-form-urlencoded";
+
+                //POST the data.
+                requestWriter = new StreamWriter(webRequest.GetRequestStream());
+                try
+                {
+                    requestWriter.Write(postData);
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    requestWriter.Close();
+                    requestWriter = null;
+                }
+            }
+
+            responseData = WebResponseGet(webRequest);
+
+            webRequest = null;
+
+            return responseData;
+        }
+
+        public string oAuthRequest(Method method, string url, string postData)
+        {
+            string outUrl = "";
+            string querystring = "";
+            string ret = "";
+
+            if (method == Method.POST)
+            {
+                if (postData.Length > 0)
+                {
+                    //Decode the parameters and re-encode using the oAuth UrlEncode method.
+                    NameValueCollection qs = HttpUtility.ParseQueryString(postData);
+                    postData = "";
+                    foreach (string key in qs.AllKeys)
+                    {
+                        if (postData.Length > 0)
+                        {
+                            postData += "&";
+                        }
+                        qs[key] = HttpUtility.UrlDecode(qs[key]);
+                        qs[key] = this.UrlEncode(qs[key]);
+                        postData += key + "=" + qs[key];
+
+                    }
+                    if (url.IndexOf("?") > 0)
+                    {
+                        url += "&";
+                    }
+                    else
+                    {
+                        url += "?";
+                    }
+                    url += postData;
+                }
+            }
+
+            Uri uri = new Uri(url);
+
+            string nonce = GenerateNonce();
+            string timeStamp = this.GenerateTimeStamp();
+
+            //Generate Signature
+            string sig = this.GenerateSignature(uri,
+                this.ConsumerKey,
+                this.ConsumerSecret,
+                this.AccessToken,
+                this.AccessTokenSecret,
+                this.Verifier,
+                method.ToString(),
+                timeStamp,
+                nonce,
+                out outUrl,
+                out querystring);
+
+            querystring += "&oauth_signature=" + HttpUtility.UrlEncode(sig);
+
+            //Convert the querystring to postData
+            if (method == Method.POST)
+            {
+                postData = querystring;
+                querystring = "";
+            }
+
+            if (querystring.Length > 0)
+            {
+                outUrl += "?";
+            }
+
+            ret = WebRequest(method, outUrl + querystring, postData);
+
+            return ret;
+        }
+
+        private string WebResponseGet(HttpWebRequest webRequest)
+        {
+            StreamReader responseReader = null;
+            string responseData = "";
+
+            try
+            {
+                responseReader = new StreamReader(webRequest.GetResponse().GetResponseStream());
+                responseData = responseReader.ReadToEnd();
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                webRequest.GetResponse().GetResponseStream().Close();
+                responseReader.Close();
+                responseReader = null;
+            }
+
+            return responseData;
+        }
+
         private string ComputeHash(HashAlgorithm hashAlgorithm, string data)
         {
             if (hashAlgorithm == null)
@@ -115,11 +255,6 @@ namespace Beam.TwitterCore.oAuth
             return Convert.ToBase64String(hashBytes);
         }
 
-        /// <summary>
-        /// Internal function to cut out all non oauth query string parameters (all parameters not begining with "oauth_")
-        /// </summary>
-        /// <param name="parameters">The query string part of the Url</param>
-        /// <returns>A list of QueryParameter each containing the parameter name and value</returns>
         private List<QueryParameter> GetQueryParameters(string parameters)
         {
             if (parameters.StartsWith("?"))
@@ -152,13 +287,7 @@ namespace Beam.TwitterCore.oAuth
             return result;
         }
 
-        /// <summary>
-        /// This is a different Url Encode implementation since the default .NET one outputs the percent encoding in lower case.
-        /// While this is not a problem with the percent encoding spec, it is used in upper case throughout OAuth
-        /// </summary>
-        /// <param name="value">The value to Url encode</param>
-        /// <returns>Returns a Url encoded string</returns>
-        public string UrlEncode(string value)
+        private string UrlEncode(string value)
         {
             StringBuilder result = new StringBuilder();
 
@@ -184,12 +313,7 @@ namespace Beam.TwitterCore.oAuth
             return result.ToString();
         }
 
-        /// <summary>
-        /// Normalizes the request parameters according to the spec
-        /// </summary>
-        /// <param name="parameters">The list of parameters already sorted</param>
-        /// <returns>a string representing the normalized parameters</returns>
-        protected string NormalizeRequestParameters(IList<QueryParameter> parameters)
+        private string NormalizeRequestParameters(IList<QueryParameter> parameters)
         {
             StringBuilder sb = new StringBuilder();
             QueryParameter p = null;
@@ -207,17 +331,7 @@ namespace Beam.TwitterCore.oAuth
             return sb.ToString();
         }
 
-        /// <summary>
-        /// Generate the signature base that is used to produce the signature
-        /// </summary>
-        /// <param name="url">The full url that needs to be signed including its non OAuth url parameters</param>
-        /// <param name="consumerKey">The consumer key</param>        
-        /// <param name="token">The token, if available. If not available pass null or an empty string</param>
-        /// <param name="tokenSecret">The token secret, if available. If not available pass null or an empty string</param>
-        /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
-        /// <param name="signatureType">The signature type. To use the default values use <see cref="OAuthBase.SignatureTypes">OAuthBase.SignatureTypes</see>.</param>
-        /// <returns>The signature base</returns>
-        public string GenerateSignatureBase(Uri url, string consumerKey, string token, string tokenSecret, string verifier, string httpMethod, string timeStamp, string nonce, string signatureType, out string normalizedUrl, out string normalizedRequestParameters)
+        private string GenerateSignatureBase(Uri url, string consumerKey, string token, string tokenSecret, string verifier, string httpMethod, string timeStamp, string nonce, string signatureType, out string normalizedUrl, out string normalizedRequestParameters)
         {
             if (token == null)
             {
@@ -283,44 +397,17 @@ namespace Beam.TwitterCore.oAuth
             return signatureBase.ToString();
         }
 
-        /// <summary>
-        /// Generate the signature value based on the given signature base and hash algorithm
-        /// </summary>
-        /// <param name="signatureBase">The signature based as produced by the GenerateSignatureBase method or by any other means</param>
-        /// <param name="hash">The hash algorithm used to perform the hashing. If the hashing algorithm requires initialization or a key it should be set prior to calling this method</param>
-        /// <returns>A base64 string of the hash value</returns>
-        public string GenerateSignatureUsingHash(string signatureBase, HashAlgorithm hash)
+        private string GenerateSignatureUsingHash(string signatureBase, HashAlgorithm hash)
         {
             return ComputeHash(hash, signatureBase);
         }
 
-        /// <summary>
-        /// Generates a signature using the HMAC-SHA1 algorithm
-        /// </summary>		
-        /// <param name="url">The full url that needs to be signed including its non OAuth url parameters</param>
-        /// <param name="consumerKey">The consumer key</param>
-        /// <param name="consumerSecret">The consumer seceret</param>
-        /// <param name="token">The token, if available. If not available pass null or an empty string</param>
-        /// <param name="tokenSecret">The token secret, if available. If not available pass null or an empty string</param>
-        /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
-        /// <returns>A base64 string of the hash value</returns>
-        public string GenerateSignature(Uri url, string consumerKey, string consumerSecret, string token, string tokenSecret, string verifier, string httpMethod, string timeStamp, string nonce, out string normalizedUrl, out string normalizedRequestParameters)
+        private string GenerateSignature(Uri url, string consumerKey, string consumerSecret, string token, string tokenSecret, string verifier, string httpMethod, string timeStamp, string nonce, out string normalizedUrl, out string normalizedRequestParameters)
         {
             return GenerateSignature(url, consumerKey, consumerSecret, token, tokenSecret, verifier, httpMethod, timeStamp, nonce, SignatureTypes.HMACSHA1, out normalizedUrl, out normalizedRequestParameters);
         }
 
-        /// <summary>
-        /// Generates a signature using the specified signatureType 
-        /// </summary>		
-        /// <param name="url">The full url that needs to be signed including its non OAuth url parameters</param>
-        /// <param name="consumerKey">The consumer key</param>
-        /// <param name="consumerSecret">The consumer seceret</param>
-        /// <param name="token">The token, if available. If not available pass null or an empty string</param>
-        /// <param name="tokenSecret">The token secret, if available. If not available pass null or an empty string</param>
-        /// <param name="httpMethod">The http method used. Must be a valid HTTP method verb (POST,GET,PUT, etc)</param>
-        /// <param name="signatureType">The type of signature to use</param>
-        /// <returns>A base64 string of the hash value</returns>
-        public string GenerateSignature(Uri url, string consumerKey, string consumerSecret, string token, string tokenSecret, string verifier, string httpMethod, string timeStamp, string nonce, SignatureTypes signatureType, out string normalizedUrl, out string normalizedRequestParameters)
+        private string GenerateSignature(Uri url, string consumerKey, string consumerSecret, string token, string tokenSecret, string verifier, string httpMethod, string timeStamp, string nonce, SignatureTypes signatureType, out string normalizedUrl, out string normalizedRequestParameters)
         {
             normalizedUrl = null;
             normalizedRequestParameters = null;
@@ -343,22 +430,14 @@ namespace Beam.TwitterCore.oAuth
             }
         }
 
-        /// <summary>
-        /// Generate the timestamp for the signature        
-        /// </summary>
-        /// <returns></returns>
-        public virtual string GenerateTimeStamp()
+        private string GenerateTimeStamp()
         {
             // Default implementation of UNIX time of the current UTC time
             TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             return Convert.ToInt64(ts.TotalSeconds).ToString();
         }
 
-        /// <summary>
-        /// Generate a nonce
-        /// </summary>
-        /// <returns></returns>
-        public virtual string GenerateNonce()
+        private string GenerateNonce()
         {
             // Just a simple implementation of a random number between 123400 and 9999999
             return random.Next(123400, 9999999).ToString();

@@ -2,43 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:beam="clr-namespace:Beam"
-        xmlns:v="clr-namespace:Beam.View"
         Title="Beam" Height="630" Width="460" WindowStartupLocation="CenterScreen" SnapsToDevicePixels="True" UseLayoutRounding="True">
     <Grid>
-        <Grid OverridesDefaultStyle="True">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="32" x:Name="rdMenu" />
-            </Grid.RowDefinitions>
-
-            
-            <ContentControl Grid.Column="1" x:Name="ContentWrapper"/>
-            <StackPanel Grid.Column="1" x:Name="AlertStack" Opacity="0.8"></StackPanel>
-
-            <Grid x:Name="tabMenu" Grid.Row="1" Height="32" HorizontalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Style="{StaticResource SvgButton}" x:Name="btTimeline">
-                    <Path x:Name="pTimeline" Width="24" Height="24" Stretch="Fill" Fill="#55acee" Style="{StaticResource timelineSVG}"/>
-                </Button>
-                <Button Grid.Column="1" Style="{StaticResource SvgButton}" x:Name="btConnect">
-                    <Canvas Width="24" Height="24">
-                        <Path x:Name="pConnect" Height="24" Width="24" Stretch="Fill" Fill="#ccd6dd" Style="{StaticResource mentionSVG}" />
-                    </Canvas>
-                </Button>
-                <Button Grid.Column="2" Style="{StaticResource SvgButton}" x:Name="btMessage">
-                    <Canvas  Width="24" Height="24">
-                        <Path x:Name="pMessage" Width="24" Height="17" Stretch="Fill" Fill="#ccd6dd" Margin="0,3.5,0,0" Style="{StaticResource messageSVG}" />
-                    </Canvas>
-                </Button>
-            </Grid>
-
-
-        </Grid>
     </Grid>
 
 </Window>
