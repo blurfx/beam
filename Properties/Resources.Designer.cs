@@ -59,5 +59,24 @@ namespace Beam.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Beam과(와) 유사한 지역화된 문자열을 찾습니다.
+        /// </summary>
+        internal static string ProgramName {
+            get {
+                return ResourceManager.GetString("ProgramName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap rain_old_man {
+            get {
+                object obj = ResourceManager.GetObject("rain_old_man", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

@@ -9,6 +9,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Windows.Interop;
 using System.Drawing.Printing;
 namespace Beam
 {
@@ -57,6 +59,8 @@ namespace Beam
         public BeamWindow()
         {
             InitializeComponent();
+            DwmDropShadow.DropShadowToWindow(this);
+            Debug.WriteLine("init");
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -64,7 +68,38 @@ namespace Beam
             var desktopWorkingArea = System.Windows.SystemParameters.WorkArea;
             this.Left = desktopWorkingArea.Left;
             this.Top = desktopWorkingArea.Top;
-            //EnableBlur();
+            EnableBlur();
+        }
+        internal void EnableBlur()
+        {
+            var windowHelper = new WindowInteropHelper(this);
+
+            var accent = new AccentPolicy();
+            var accentStructSize = Marshal.SizeOf(accent);
+            accent.AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND;
+
+            var accentPtr = Marshal.AllocHGlobal(accentStructSize);
+            Marshal.StructureToPtr(accent, accentPtr, false);
+
+            var data = new WindowCompositionAttributeData();
+            data.Attribute = WindowCompositionAttribute.WCA_ACCENT_POLICY;
+            data.SizeOfData = accentStructSize;
+            data.Data = accentPtr;
+
+            SetWindowCompositionAttribute(windowHelper.Handle, ref data);
+
+            Marshal.FreeHGlobal(accentPtr);
+        }
+
+        private void appbar_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Debug.WriteLine("damn");
+            this.DragMove();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
     public static class DwmDropShadow

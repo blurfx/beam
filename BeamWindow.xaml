@@ -2,9 +2,29 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:beam="clr-namespace:Beam"
-        Title="Beam" Height="630" Width="460" WindowStartupLocation="CenterScreen" SnapsToDevicePixels="True" UseLayoutRounding="True" AllowsTransparency="True" WindowState="Normal" Loaded="Window_Loaded" Background="#88FFFFFF">
-    <Grid>
-        
-    </Grid>
+        Title="Beam" Height="630" Width="460"  SnapsToDevicePixels="True" UseLayoutRounding="True" AllowsTransparency="True" WindowState="Normal" Loaded="Window_Loaded" Background="Transparent" WindowStyle="None" ResizeMode="CanResizeWithGrip" MinWidth="460" MinHeight="630">
+    <Border CornerRadius="6,6,6,6" Background="#66ffffff"><!--
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="5"
+                              Opacity=".5"
+                              ShadowDepth="3"/>
+        </Border.Effect>
+        -->
+        <Grid>
+            <Grid HorizontalAlignment="Left" Width="80">
+                <Button Canvas.Top="44" Width="48" Height="48" Canvas.Left="16" Background="#FFDDDDDD" BorderThickness="0" Margin="16,47,0,535" HorizontalAlignment="Left" Grid.RowSpan="4" Padding="0" >
+                    <Image Width="48" Height="48" Source="pack://application,,,/Resources/rain_old_man.jpg" Stretch="UniformToFill"/>
+                </Button>
+            </Grid>
+            <Grid Name="appbar" Height="30" VerticalAlignment="Top" MouseDown="appbar_MouseDown" Panel.ZIndex="1" Background="#00000000">
+                <Button Content="●" Canvas.Left="430" Width="30" BorderBrush="Transparent" Foreground="#FFF44336" BorderThickness="0" Background="#00DDDDDD" Click="Button_Click" HorizontalContentAlignment="Center" Padding="1" HorizontalAlignment="Right" FontSize="24" Margin="0,-8,0,0"/>
+                <Label Content="Beam" FontWeight="Bold" FontFamily="Montserrat" Foreground="#FF16181D" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" HorizontalAlignment="Left" Width="80" Margin="0,0,0,3"/>
 
+            </Grid>
+            <Canvas Margin="80,0,0,0" Background="White">
+                <Border CornerRadius="6,6,6,6"/>
+            </Canvas>
+
+        </Grid>
+    </Border>
 </Window>
