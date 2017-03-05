@@ -70,6 +70,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ToggleSwitch.xaml.cs">
+      <DependentUpon>ToggleSwitch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TwitterCore\Helper\Extension.cs" />
     <Compile Include="TwitterCore\Helper\Json.cs" />
     <Compile Include="TwitterCore\Model\Coordinates.cs" />
@@ -110,6 +113,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="BeamWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ToggleSwitch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
