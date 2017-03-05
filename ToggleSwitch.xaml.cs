@@ -1,5 +1,4 @@
-﻿using Beam.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,25 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Beam.View
+namespace Beam
 {
     /// <summary>
-    /// ConnectView.xaml에 대한 상호 작용 논리
+    /// ToggleSwitch.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class ConnectView : UserControl
+    public partial class ToggleSwitch : UserControl
     {
-        public ConnectView()
+        public ToggleSwitch()
         {
             InitializeComponent();
-        }
-        public TweetPanel InsertTweet(Tweet tweet)
-        {
-            if (tweet != null){
-                TweetPanel panel = new TweetPanel(tweet);
-                lConnect.Items.Insert(0, panel);
-                return panel;
-            }
-            return null;
         }
     }
 }

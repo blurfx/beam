@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Beam.TwitterCore.Models
+namespace Beam.TwitterCore.Model
 {
     [DataContract]
     public class MessageWrapper

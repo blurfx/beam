@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Beam</RootNamespace>
     <AssemblyName>Beam</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -39,6 +40,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -63,37 +65,22 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ToggleSwitch.xaml.cs">
+      <DependentUpon>ToggleSwitch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TwitterCore\Helper\Extension.cs" />
     <Compile Include="TwitterCore\Helper\Json.cs" />
-    <Compile Include="TwitterCore\Models\Delete.cs" />
-    <Compile Include="TwitterCore\Models\Entities.cs" />
-    <Compile Include="TwitterCore\Models\Message.cs" />
-    <Compile Include="TwitterCore\Models\Tweet.cs" />
-    <Compile Include="TwitterCore\Models\User.cs" />
-    <Compile Include="PostDialog.xaml.cs">
-      <DependentUpon>PostDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\AlertBox.xaml.cs">
-      <DependentUpon>AlertBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\ConnectView.xaml.cs">
-      <DependentUpon>ConnectView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\InitAuthView.xaml.cs">
-      <DependentUpon>InitAuthView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\MessageView.xaml.cs">
-      <DependentUpon>MessageView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\TimelineView.xaml.cs">
-      <DependentUpon>TimelineView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\TryAuthView.xaml.cs">
-      <DependentUpon>TryAuthView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\TweetPanel.xaml.cs">
-      <DependentUpon>TweetPanel.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="TwitterCore\Model\Coordinates.cs" />
+    <Compile Include="TwitterCore\Model\Delete.cs" />
+    <Compile Include="TwitterCore\Model\Message.cs" />
+    <Compile Include="TwitterCore\Model\Place.cs" />
+    <Compile Include="TwitterCore\Model\Status.cs" />
+    <Compile Include="TwitterCore\Model\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BeamWindow.xaml.cs">
@@ -103,11 +90,6 @@
     <Compile Include="TwitterCore\oAuth\Twitter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -134,35 +116,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PostDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\AlertBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\ConnectView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\InitAuthView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\MessageView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\TimelineView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\TryAuthView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\TweetPanel.xaml">
+    <Page Include="ToggleSwitch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -180,6 +134,15 @@
     <Resource Include="Assets\setting_on.png" />
     <Resource Include="Assets\star_off.png" />
     <Resource Include="Assets\star_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModel\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rain_old_man.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\the_old_man_and_the_sea_by_borda-d5mt6za.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

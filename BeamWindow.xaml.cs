@@ -1,188 +1,167 @@
-﻿using System;
+﻿using Beam.TwitterCore.Helper;
+using Beam.TwitterCore.Model;
+using Beam.TwitterCore.oAuth;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
-using System.Web;
-using System.Web.Script.Serialization;
-using Beam.oAuth;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Text;
-using System.Collections.Generic;
-using Beam.Helper;
-using Beam.View;
 using System.Windows.Threading;
-using Beam.Model;
-using System.Runtime.Serialization.Json;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Windows.Interop;
+using System.Drawing.Printing;
 namespace Beam
 {
     /// <summary>
     /// Interaction logic for BeamWindow.xaml
     /// </summary>
     /// 
+    internal enum AccentState
+    {
+        ACCENT_DISABLED = 0,
+        ACCENT_ENABLE_GRADIENT = 1,
+        ACCENT_ENABLE_TRANSPARENTGRADIENT = 2,
+        ACCENT_ENABLE_BLURBEHIND = 3,
+        ACCENT_INVALID_STATE = 4
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct AccentPolicy
+    {
+        public AccentState AccentState;
+        public int AccentFlags;
+        public int GradientColor;
+        public int AnimationId;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct WindowCompositionAttributeData
+    {
+        public WindowCompositionAttribute Attribute;
+        public IntPtr Data;
+        public int SizeOfData;
+    }
+
+    internal enum WindowCompositionAttribute
+    {
+        // ...
+        WCA_ACCENT_POLICY = 19
+        // ...
+    }
     public partial class BeamWindow : Window
     {
-
-        public Twitter t = new Twitter();
-        public User me = new User();
-        string _currentView = null;
-
-
-        Dictionary<String, UserControl> viewDict = new Dictionary<string, UserControl>();
+        [DllImport("user32.dll")]
+        internal static extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
+        //public Twitter twitter = new Twitter();
 
         public BeamWindow()
         {
             InitializeComponent();
+            DwmDropShadow.DropShadowToWindow(this);
+            Debug.WriteLine("init");
+        }
 
-            viewDict.Add("init", new InitAuthView());
-            viewDict.Add("auth", new TryAuthView());
-            viewDict.Add("timeline", new TimelineView());
-            viewDict.Add("connect", new ConnectView());
-            viewDict.Add("message", new MessageView());
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            var desktopWorkingArea = System.Windows.SystemParameters.WorkArea;
+            this.Left = desktopWorkingArea.Left;
+            this.Top = desktopWorkingArea.Top;
+            EnableBlur();
+        }
+        internal void EnableBlur()
+        {
+            var windowHelper = new WindowInteropHelper(this);
 
-            ChangeView("init");
-            
-            if (!String.IsNullOrEmpty(Properties.Settings.Default.token) || !String.IsNullOrEmpty(Properties.Settings.Default.tokenSec))
+            var accent = new AccentPolicy();
+            var accentStructSize = Marshal.SizeOf(accent);
+            accent.AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND;
+
+            var accentPtr = Marshal.AllocHGlobal(accentStructSize);
+            Marshal.StructureToPtr(accent, accentPtr, false);
+
+            var data = new WindowCompositionAttributeData();
+            data.Attribute = WindowCompositionAttribute.WCA_ACCENT_POLICY;
+            data.SizeOfData = accentStructSize;
+            data.Data = accentPtr;
+
+            SetWindowCompositionAttribute(windowHelper.Handle, ref data);
+
+            Marshal.FreeHGlobal(accentPtr);
+        }
+
+        private void appbar_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Debug.WriteLine("damn");
+            this.DragMove();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+    }
+    public static class DwmDropShadow
+    {
+        [DllImport("dwmapi.dll", PreserveSig = true)]
+        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmExtendFrameIntoClientArea(IntPtr hWnd, ref Margins pMarInset);
+
+        /// <summary>
+        /// Drops a standard shadow to a WPF Window, even if the window is borderless. Only works with DWM (Windows Vista or newer).
+        /// This method is much more efficient than setting AllowsTransparency to true and using the DropShadow effect,
+        /// as AllowsTransparency involves a huge performance issue (hardware acceleration is turned off for all the window).
+        /// </summary>
+        /// <param name="window">Window to which the shadow will be applied</param>
+        public static void DropShadowToWindow(Window window)
+        {
+            if (!DropShadow(window))
             {
-                t.Token = Properties.Settings.Default.token;
-                t.TokenSecret = Properties.Settings.Default.tokenSec;
+                window.SourceInitialized += new EventHandler(window_SourceInitialized);
+            }
+        }
 
-                ChangeView("timeline");
-                try
+        private static void window_SourceInitialized(object sender, EventArgs e)
+        {
+            Window window = (Window)sender;
+
+            DropShadow(window);
+
+            window.SourceInitialized -= new EventHandler(window_SourceInitialized);
+        }
+
+        /// <summary>
+        /// The actual method that makes API calls to drop the shadow to the window
+        /// </summary>
+        /// <param name="window">Window to which the shadow will be applied</param>
+        /// <returns>True if the method succeeded, false if not</returns>
+        private static bool DropShadow(Window window)
+        {
+            try
+            {
+                WindowInteropHelper helper = new WindowInteropHelper(window);
+                int val = 2;
+                int ret1 = DwmSetWindowAttribute(helper.Handle, 2, ref val, 4);
+
+                if (ret1 == 0)
                 {
-                    me = Json.Deserialize<User>(t.oAuthWebRequest(Twitter.Method.GET, "https://api.twitter.com/1.1/account/verify_credentials.json", String.Empty));
-                } catch {
-                    showAlert("Unable to connect to Twitter",AlertBox.MessageType.Error);
+                    Margins m = new Margins { Bottom = 0, Left = 0, Right = 0, Top = 0 };
+                    int ret2 = DwmExtendFrameIntoClientArea(helper.Handle, ref m);
+                    return ret2 == 0;
                 }
-
-
-                rdMenu.Height = new GridLength(32);
-                Task.Run(async () => await startStream());
-            }
-            
-            btTimeline.Click += delegate { ChangeView("timeline"); };
-            btConnect.Click += delegate { ChangeView("connect"); };
-            btMessage.Click += delegate { ChangeView("message"); };
-        }
-
-        public async Task startStream()
-        {
-            await t.singleUserStream(delegate (){
-                CurrentDispatcher.BeginInvoke((Action)(() =>
-                {
-                    showAlert("Connected to userstream");
-                }));
-            },
-            delegate (string json){
-                CurrentDispatcher.BeginInvoke((Action)(() => {
-                    json = System.Net.WebUtility.HtmlDecode(json);
-                    Extension.TweetType type = Extension.checkTweetType(json);
-                    if (type != Extension.TweetType.Init)
-                    {
-                        switch (type)
-                        {
-                            case Extension.TweetType.Normal:
-                                Tweet tweet = Json.Deserialize<Tweet>(json);
-                                ((TimelineView)viewDict["timeline"]).InsertTweet(tweet);
-
-                                if(tweet.Entities.Mentions.Count != 0)
-                                {
-                                    bool _Mentioned = false;
-                                    foreach (Mention m in tweet.Entities.Mentions)
-                                        if (m.Id == me.Id) _Mentioned = true;
-                                    if (tweet.Text.ToLower().Contains("@" + me.ScreenName.ToLower())) _Mentioned = true;
-                                    if(_Mentioned) ((ConnectView)viewDict["connect"]).InsertTweet(tweet);
-                                }
-                                
-                                break;
-
-                            case Extension.TweetType.Message:
-                                Message message = Json.Deserialize<MessageWrapper>(json).Message;
-                                break;
-
-                            case Extension.TweetType.Delete:
-                                DeletedStatus status = Json.Deserialize<DeleteWrapper>(json).Delete.Status;
-                                ((TimelineView)viewDict["timeline"]).RemoveTweet(status.Id);
-                                break;
-                        }
-                        
-                    }
-                }));
-            }, delegate (){
-                CurrentDispatcher.BeginInvoke((Action)(() =>
-                {
-                    showAlert("Unable to connect to userstream",AlertBox.MessageType.Error);
-                }));
-            });
-        }
-
-        /*
-        private void tbTweet_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-            {
-                int carIndex = tbTweet.CaretIndex+1;
-                tbTweet.Text = tbTweet.Text.Insert(tbTweet.CaretIndex, "\n");
-                tbTweet.Select(carIndex, 0);
-                return;
-            }
-            if (e.Key == Key.Enter && !String.IsNullOrWhiteSpace(tbTweet.Text))
-            {
-                t.oAuthWebRequest(Twitter.Method.POST, "https://api.twitter.com/1.1/statuses/update.json", "status=" + oAuth.UrlEncode(tbTweet.Text));
-                tbTweet.Text = null;
-            }
-        }
-        */
-
-        public void ChangeView(string viewKey)
-        {
-            if (viewKey != _currentView && viewDict.ContainsKey(viewKey))
-            {
-                ContentWrapper.Content = viewDict[viewKey];
-                pTimeline.Fill = pConnect.Fill = pMessage.Fill = new SolidColorBrush(Color.FromRgb(204, 214, 221));
-                switch (viewKey)
-                {
-                    case "init":
-                    case "auth":
-                        rdMenu.Height = new GridLength(0);
-                        return;
-                    case "timeline":
-                        pTimeline.Fill = new SolidColorBrush(Color.FromRgb(85, 172, 238));
-                        return;
-                    case "connect":
-                        pConnect.Fill = new SolidColorBrush(Color.FromRgb(85, 172, 238));
-                        return;
-                    case "message":
-                        pMessage.Fill = new SolidColorBrush(Color.FromRgb(85, 172, 238));
-                        return;
-                }
-                
-            }
-
-        }
-
-        Dispatcher CurrentDispatcher
-        {
-            get
-            {
-                if (Application.Current != null)
-                    return Application.Current.Dispatcher;
                 else
-                    return Dispatcher.CurrentDispatcher;
+                {
+                    return false;
+                }
             }
-        }
-
-        public void showAlert(string message, AlertBox.MessageType type = AlertBox.MessageType.Success)
-        {
-            AlertBox alertBox = new AlertBox();
-            DispatcherTimer alertTimeout = new DispatcherTimer();
-            alertBox.SetMessage(message,type);
-            alertTimeout.Interval = TimeSpan.FromSeconds(5);
-            alertTimeout.Tick += delegate { alertTimeout.Stop(); AlertStack.Children.Remove(alertBox); alertBox = null; alertTimeout = null; };
-            alertBox.MouseUp += delegate { alertTimeout.Stop(); AlertStack.Children.Remove(alertBox); alertBox = null; alertTimeout = null; };
-            AlertStack.Children.Add(alertBox);
-            alertTimeout.Start();
-
+            catch (Exception ex)
+            {
+                // Probably dwmapi.dll not found (incompatible OS)
+                return false;
+            }
         }
     }
 }
